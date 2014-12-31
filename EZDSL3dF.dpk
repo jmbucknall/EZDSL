@@ -1,0 +1,63 @@
+{===EZDSL3DC==========================================================
+
+Part of the EZ Delphi Structures Library--the Delphi 2009 package
+(revision D)
+
+EZDSL3dC is Copyright (c) 1993-2009 by  Julian M. Bucknall
+
+VERSION HISTORY
+31Jan09 JMB 3.03 Added package file for Delphi 2009
+28Jul02 JMB 3.03 Added package file for Delphi 2006
+12Feb02 JMB 3.03 Release for Delphi 6
+=====================================================================}
+{ Copyright (c) 1993-2009, Julian M. Bucknall. All Rights Reserved   }
+
+package EZDSL3dF;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS OFF}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'EZDSL package - Delphi 2009, revision D'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl;
+
+contains
+  EZDSLThd in 'EZDSLThd.PAS',
+  EZDSLBAr in 'EZDSLBAr.PAS',
+  EZDSLBse in 'EZDSLBse.PAS',
+  EZDSLBtr in 'EZDSLBtr.PAS',
+  EZDSLCol in 'EZDSLCol.PAS',
+  EZDSLCts in 'EZDSLCts.PAS',
+  EZDSLDbl in 'EZDSLDbl.PAS',
+  EZDSLHsh in 'EZDSLHsh.PAS',
+  EZDSLLst in 'EZDSLLst.PAS',
+  EZDSLPQu in 'EZDSLPQu.PAS',
+  EZDSLQue in 'EZDSLQue.PAS',
+  EZDSLRnd in 'EZDSLRnd.PAS',
+  EZDSLSkp in 'EZDSLSkp.PAS',
+  EZDSLStk in 'EZDSLStk.PAS',
+  EZDSLSup in 'EZDSLSup.PAS';
+
+end.
