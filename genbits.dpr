@@ -13,9 +13,9 @@ begin
   Rewrite(F);
   writeln(F, '{*********************************************************}');
   writeln(F, '{* EZBITCNT.INC                                          *}');
-  writeln(F, '{* Copyright (c) Julian M Bucknall 1998-2011             *}');
+  writeln(F, '{* Copyright (c) Julian M Bucknall 1998-2015             *}');
   writeln(F, '{* All rights reserved.                                  *}');
-  writeln(F, '{* Version: 3.04                                         *}');
+  writeln(F, '{* Version: 3.10                                         *}');
   writeln(F, '{*********************************************************}');
   writeln(F, '{* Counts of set bits in bytes (auto-generated)          *}');
   writeln(F, '{*********************************************************}');

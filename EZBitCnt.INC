@@ -1,8 +1,8 @@
 {*********************************************************}
 {* EZBITCNT.INC                                          *}
-{* Copyright (c) Julian M Bucknall 1998-2011             *}
+{* Copyright (c) Julian M Bucknall 1998-2015             *}
 {* All rights reserved.                                  *}
-{* Version: 3.04                                         *}
+{* Version: 3.10                                         *}
 {*********************************************************}
 {* Counts of set bits in bytes (auto-generated)          *}
 {*********************************************************}

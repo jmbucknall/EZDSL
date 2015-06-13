@@ -1,12 +1,22 @@
 program TstEZRnd;
-  {-Full random number test suite for EZRNDSTM.
+  {-Full random number test suite for EZDSLRND.
+
     This program was partly derived from RAN_TEST.C, written by
     Kevin Watkins from his book Discrete Event Simulation in C.
     There are several bugs in that program (and some errors in the
     book), this program uses Knuth's Seminumerical Algorithms to
     solve them.
+
     The Chi-Squared table was generated from routines in Numerical
     Recipes in Pascal.}
+
+  {-Calling syntax:
+      TstEZRND
+        to run tests on EZDSL PRNG class
+     or
+      TstEZRND /s
+        to run tests on the standard Delphi random number generator.}
+
 
 {Copyright (c) 1994, Julian M. Bucknall}
 
@@ -18,38 +28,26 @@ program TstEZRnd;
 {$APPTYPE CONSOLE}
 
 uses
-  Windows, EZRndStm;
+  Windows, EZDSLRnd;
 
 const
   Intervals = 100;
   Gaps = 10;
-  {$IFOPT N+}
-  DefNumber = 5000;
-  {$ELSE}
-  DefNumber = 10000;
-  {$ENDIF}
-
-type
-  {$IFOPT N+}
-  RandFloat = extended;
-  {$ELSE}
-  RandFloat = real;
-  {$ENDIF}
 
 {$I CHITABLE.INC}
 
 const
-  RandArrayElements = 65520 div sizeof(RandFloat);
+  RandArrayElements = 10000;
 
 type
   PRandArray = ^TRandArray;
-  TRandArray = array [0..pred(RandArrayElements)] of RandFloat;
+  TRandArray = array [0..pred(RandArrayElements)] of double;
 
 var
   RA : PRandArray;
   Number : integer;
 
-function IntPower(X  : RandFloat; N : integer) : RandFloat;
+function IntPower(X  : double; N : integer) : double;
   begin
     case N of
       0 : IntPower := 1.0;
@@ -63,10 +61,10 @@ function IntPower(X  : RandFloat; N : integer) : RandFloat;
     end;{case}
   end;
 
-function Stirling(N, M : integer) : RandFloat;
+function Stirling(N, M : integer) : double;
   {-Calculate type-2 Stirling number, n & m are both assumed >= 0}
   var
-    Work1, Work2 : RandFloat;
+    Work1, Work2 : double;
   begin
     if (N < M) then
       Stirling := 0.0
@@ -86,9 +84,12 @@ function Stirling(N, M : integer) : RandFloat;
 
 procedure WriteHeading(S : string);
   function UnderLine(Len : integer) : string;
+    var
+      i : integer;
     begin
       SetLength(Result, Len);
-      FillChar(Result[1], Len, '-');
+      for i := 1 to Len do
+        Result[i] := '-';
     end;
   begin
     writeln(UnderLine(50));
@@ -97,7 +98,7 @@ procedure WriteHeading(S : string);
     writeln;
   end;
 
-procedure WriteChiRange(DegFree : integer; ChiSqVal : RandFloat);
+procedure WriteChiRange(DegFree : integer; ChiSqVal : double);
   begin
     writeln('90% of the time, the value should be between');
     writeln('  ', ChiTable5[DegFree]:0:5, ' and ', ChiTable95[DegFree]:0:5);
@@ -118,7 +119,7 @@ procedure UniformityTest;
     BucketNumber,
     i : integer;
     RangeLeft, RangeRight,
-    Expected, ChiSqVal : RandFloat;
+    Expected, ChiSqVal : double;
     Bucket : array[0..pred(Intervals)] of integer;
   begin
     WriteHeading('UNIFORMITY TEST');
@@ -159,13 +160,13 @@ lengths are then bucketed, you'll get lengths of 0 upwards. These
 lengths are the 'gaps' between 1's. Apply Chi-Squared test to the
 buckets.
 ======================================================================}
-procedure GapTest(Lower, Upper : RandFloat);
+procedure GapTest(Lower, Upper : double);
   var
     NumGaps,
     GapLen : integer;
     i : integer;
     p,
-    Expected, ChiSqVal : RandFloat;
+    Expected, ChiSqVal : double;
     Bucket : array [0..pred(Gaps)] of integer;
   begin
     WriteHeading('GAP TEST');
@@ -233,10 +234,10 @@ procedure PokerTest;
     BucketNumber,
     NumFives : integer;
     Accum, Divisor,
-    Expected, ChiSqVal : RandFloat;
+    Expected, ChiSqVal : double;
     Bucket : array [0..4] of integer;
     Flag : array [0..9] of boolean;
-    p : array [0..4] of RandFloat;
+    p : array [0..4] of double;
   begin
     WriteHeading('POKER TEST');
     {prepare}
@@ -301,11 +302,10 @@ procedure CouponCollectorsTest;
   var
     NumSeqs, LenSeq, NumVals, NewVal, Inx,
     i : integer;
-    work,
-    Expected, ChiSqVal : RandFloat;
+    Expected, ChiSqVal : double;
     Bucket : array [5..20] of integer;
     Occurs : array [0..4] of boolean;
-    p : array [5..20] of RandFloat;
+    p : array [5..20] of double;
   begin
     WriteHeading('COUPON COLLECTORS TEST');
 
@@ -364,48 +364,43 @@ procedure CouponCollectorsTest;
   end;
 
 var
-  i,
-  ec : integer;
+  i : longint;
   SumX, SumXX,
   Mean, Variance,
-  X : RandFloat;
-  RS : PRandStream;
+  X : double;
+  RG : TEZRandomGenerator;
   UseSYSTEM : boolean;
   StartTime, EndTime : integer;
-  RF : TrsFloat;
+  RF : double;
 
 begin
   {Get command line arguments}
   {--first parameter is the number of random numbers to generate}
   {--second parameter is '/s' to indicate using the SYSTEM.Random function}
-  Number := DefNumber;
+  Number := RandArrayElements;
   UseSYSTEM := false;
   if (ParamCount >= 1) then
     begin
-      Val(ParamStr(1), Number, ec);
-      if (ec <> 0) or (Number > RandArrayElements) or (Number = 0) then
-        Number := DefNumber;
-      if (ParamCount >= 2) then
-        if (ParamStr(2) = '/S') or (ParamStr(2) = '/s') then
-          UseSYSTEM := true;
+      if (ParamStr(1) = '/S') or (ParamStr(1) = '/s') then
+        UseSYSTEM := true;
     end;
   {Create new random number stream}
-  Randomize;
-  RS := CreateRandStream(0);
+  Randomize(); // default PRNG
+  RG := TEZRandomGenerator.Create();
   {quick test on speed--calculate 1000000 random numbers}
   StartTime := GetTickCount;
-  for i := 1 to 1000000 do
-    RF := Random;
+  for i := 1 to 10000000 do
+    RF := Random();
   EndTime := GetTickCount;
-  writeln('Speed test, System.Random: ', EndTime-StartTime);
+  writeln('Speed test, 10M random numbers, System.Random: ', EndTime-StartTime);
   StartTime := GetTickCount;
-  for i := 1 to 1000000 do
-    RF := rsRandomFloat(RS);
+  for i := 1 to 10000000 do
+    RF := RG.Random();
   EndTime := GetTickCount;
-  writeln('Speed test, rsRandomFloat: ', EndTime-StartTime);
+  writeln('Speed test, 10M random numbers, TEZRandomGenerator: ', EndTime-StartTime);
   readln;
   {Create random number array on heap}
-  New(RA);
+  GetMem(RA, Number * sizeof(double));
   {Populate random number array, calc sum values for mean/variance}
   SumX := 0.0;
   SumXX := 0.0;
@@ -414,11 +409,7 @@ begin
       if UseSYSTEM then
         X := Random
       else
-        {$IFOPT N+}
-        X := rsRandomFloat(RS);
-        {$ELSE}
-        X := rsRandomReal(RS);
-        {$ENDIF}
+        X := RG.Random();
       SumX := SumX + X;
       SumXX := SumXX + (X * X);
       RA^[i] := X;
@@ -444,8 +435,7 @@ begin
   CouponCollectorsTest;
   readln;
   {clean up}
-  FreeMem(RA, Number * sizeof(RandFloat));
-  if not UseSYSTEM then
-    DestroyRandStream(RS);
+  FreeMem(RA, Number * sizeof(double));
+  RG.Free();
 end.
 

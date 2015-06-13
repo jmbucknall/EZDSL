@@ -4,7 +4,7 @@ uses
   SysUtils;
 
 const
-  PrimeLimit = 4099;
+  PrimeLimit = 9999;
 
 var
   Primes : array [1..PrimeLimit] of boolean;
@@ -32,9 +32,9 @@ begin
   rewrite(F);
   writeln(F, '{*********************************************************}');
   writeln(F, '{* EZPrimes.INC                                          *}');
-  writeln(F, '{* Copyright (c) Julian M Bucknall 1997-2011             *}');
+  writeln(F, '{* Copyright (c) Julian M Bucknall 1997-2015             *}');
   writeln(F, '{* All rights reserved.                                  *}');
-  writeln(F, '{* Version: 3.04                                         *}');
+  writeln(F, '{* Version: 3.10                                         *}');
   writeln(F, '{*********************************************************}');
   writeln(F, '{* Prime number array include file (auto-generated)      *}');
   writeln(F, '{*********************************************************}');
