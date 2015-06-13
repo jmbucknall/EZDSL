@@ -14,14 +14,18 @@ VERSION HISTORY
 {=====================================================================}
 
 { Check for Delphi }
+{$IF CompilerVersion >= 22}
+  {$DEFINE XeOrLater}
+{$ENDIF}
 {$IFNDEF VER80} {$IFNDEF VER90}
   {$IFNDEF VER100} {$IFNDEF VER120}
     {$IFNDEF VER130} {$IFNDEF VER140}
       {$IFNDEF VER180}
         {$IFNDEF VER200}
-          {$IFNDEF VER220}
-!! Error - EZDSL is for Delphi 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 2006/7, 2009, XE *only*
-{$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
+          {$IFNDEF XeOrLater}
+!! Error - EZDSL is for Delphi 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 2006/7, 2009, XE+ *only*
+{$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
+{$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
 
 {------Fixed compiler options throughout EZDSL------------------------}
 
@@ -147,8 +151,8 @@ VERSION HISTORY
 {$ENDIF}
 
 
-{---Delphi XE specific---}
-{$IFDEF VER220}
+{---Delphi XE+ specific---}
+{$IFDEF XeOrLater}
 {$A+   Use DWORD alignment whereever possible }
 {$B-   Short-circuit boolean expressions }
 {$I+   I/O checking via exceptions }
@@ -173,15 +177,9 @@ VERSION HISTORY
 {$IFDEF Win32}
 {$DEFINE ThreadsExist}
 {$ENDIF}
-{$IFDEF Linux}
-{$DEFINE ThreadsExist}
-{$ENDIF}
 
 {---32-bit assembler---}
 {$IFDEF Win32}
-{$DEFINE BASM32}
-{$ENDIF}
-{$IFDEF Linux}
 {$DEFINE BASM32}
 {$ENDIF}
 {---------------------------------------------------------------------}
