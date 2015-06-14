@@ -27,7 +27,7 @@ of the whiz new syntax of Delphi: exceptions, virtual constructors,
 properties and so on. The first version of EZDSL appeared in 1995,
 version 2 was ported to 32 bits for the Delphi 2.0 compiler (of course
 making sure that it could still be compiled with Delphi 1.0 in 16
-bits) and now, support for Delphi 3, 4, 5, 6 and packages.
+bits) and now, support for later Delphis and packages.
 
 Within this document I shall not spend too much time describing how
 the data structures work and what they're for; any data structures
@@ -160,14 +160,14 @@ of scheme was too restricting: if I found a better implementation of a
 list I don't have to worry too much about breaking up my hierarchy (so
 long as I interface the same methods). The other thing is that
 deriving a stack from a linked list for example means that not only do
-you get the Push and Pop methods but you also get a whole slew of
-linked list methods appearing as well (Prev, Next, Insert, Delete or
+you get the `Push` and `Pop` methods but you also get a whole slew of
+linked list methods appearing as well (`Prev`, `Next`, `Insert`, `Delete` or
 whatever).
 
 However I have tried to be consistent in my naming convention so that
-for example, there is a method called Next for a TLinkList, TDList and
-TSkipList but it works in different ways for each (and has a different
-calling interface) - the Next method is not virtual.
+for example, there is a method called `Next` for a `TLinkList`, `TDList` and
+`TSkipList` but it works in different ways for each (and has a different
+calling interface) - the `Next` method is not virtual.
 
 There is one container that stands out from the crowd and from much of
 the above: the boolean array. This data structure just provides an
@@ -175,7 +175,7 @@ array of boolean values, true or false, and no data objects are stored
 inside. Remember that all of the information in this help file
 relating to data objects (including ownership, disposal, duplication,
 and so on) do not apply to the boolean array. It is a container truly
-"on its own," since it doesn't descend from TAbstractContainer either.
+"on its own," since it doesn't descend from `TAbstractContainer` either.
 
 The EZDSL library has been written assuming that the data objects are
 pointers to something. This scheme makes it easy to have the
@@ -211,9 +211,9 @@ and EXSTRSTK.
 Data Objects and Polymorphism
 ----------------------------------------------------------------------
 The first version of the EZSTRUCS unit (on which this EZDSL library
-was originally based) had virtual methods called Compare, DisposeData
-and DupData. However, I found that often the ONLY methods I was
-overriding were... Compare, DisposeData and DupData! The data
+was originally based) had virtual methods called `Compare`, `DisposeData`
+and `DupData`. However, I found that often the ONLY methods I was
+overriding were... `Compare`, `DisposeData` and `DupData`! The data
 container worked fine 'out of the box', it was such a pain to override
 yet another class just to alter one of these methods.
 
@@ -233,18 +233,18 @@ To set them you first create your new container object by calling the
 Create constructor. This sets the internal procedure and function
 pointers of the object to 'do nothing' abstract routines. Then you set
 the actual routines you want to use by modifying the required
-properties: Compare, DisposeData and DupData.  EZDSL provides some
+properties: `Compare`, `DisposeData` and `DupData`.  EZDSL provides some
 popular ones in EZDSLSUP.PAS:  comparison between two longints,
 between two strings (short strings in Delphi 2/3), disposing and
 duplicating the same. 
 
-Although you can alter the DisposeData and DupData properties when the
+Although you can alter the `DisposeData` and `DupData` properties when the
 container is not empty, it doesn't make much sense to do so. Altering
-the Compare property has an interesting side effect: if the container
-maintains its data objects in a sorted order, changing the Compare
+the `Compare` property has an interesting side effect: if the container
+maintains its data objects in a sorted order, changing the `Compare`
 method will cause the data objects to be resorted in the container.
 
-The Compare, DisposeData and DupData routines that you write *must* be
+The `Compare`, `DisposeData` and `DupData` routines that you write *must* be
 global, declared 'far' in Delphi 1.0 and declared using the normal
 Pascal fastcall calling convention (viz 'register') in Delphi 2/3. In
 other words 
@@ -254,16 +254,11 @@ other words
     explicitly as near routines; and
 (c) in 32-bit Delphi they cannot be declared 'cdecl' or 'stdcall'.
 
-They must also follow the routine prototypes TCompareFunc,
-TDisposeDataProc and TDupDataFunc respectively.
+They must also follow the routine prototypes `TCompareFunc`,
+`TDisposeDataProc` and `TDupDataFunc` respectively.
 
 To facilitate cloning containers with the most flexibility, you can
-clone a container and use a different Compare function than the
-container you are cloning from (useful for maintaining trees or lists
-with their data objects in two different orders).
-
-To facilitate cloning containers with the most flexibility, you can
-clone a container and use a different Compare function than the
+clone a container and use a different `Compare` function than the
 container you are cloning from (useful for maintaining trees or lists
 with their data objects in two different orders).
 
@@ -273,40 +268,40 @@ Sorted Containers, Compare and Duplicate Data Objects
 ----------------------------------------------------------------------
 A number of the containers in EZDSL maintain their data objects in
 some kind of ordered sequence. The sequence that they are maintained
-in is generally defined by the container's Compare property. Some
+in is generally defined by the container's `Compare` property. Some
 containers are automatically and always 'sorted': skip lists and
 binary search trees are two examples. Some are never sorted: stacks
 and queues for example. Some containers can be used sorted or
 unsorted: examples are linked lists or double linked lists. One
 container is kept in an ordered sequence, yet that sequence has
-nothing to do with Compare : the hash table. The boolean array doesn't
+nothing to do with `Compare`: the hash table. The boolean array doesn't
 support storing data objects at all, so this topic doesn't even apply.
 
-The Compare property is a function that you write (or is one of the
+The `Compare` property is a function that you write (or is one of the
 supplied functions). The routine must compare two data objects and
 return a negative number (e.g. -1) if the first data object is 'less'
 than the second, zero if they are equal, and a positive number (e.g.
-1) if the first is greater than the second. The Compare function is
+1) if the first is greater than the second. The `Compare` function is
 used only by sorted containers to maintain the internal sorted
-sequence, or by unsorted containers that implement a Search method. In
-the latter case, the Compare method is just used as an equal or not-
-equal test. Unsorted containers that do not have a Search method do
-not use the Compare property, and so in these cases it does not have
+sequence, or by unsorted containers that implement a `Search` method. In
+the latter case, the `Compare` method is just used as an equal or not-
+equal test. Unsorted containers that do not have a `Search` method do
+not use the `Compare` property, and so in these cases it does not have
 to be set.
 
 The exception to this rule is the hash table. Here data objects are
 stored in a 'sequence' that enables them to be retrieved very quickly,
-and yet this sequence has nothing to do with Compare. In fact, the
-Compare property is not used with hash tables so it's pointless to set
+and yet this sequence has nothing to do with `Compare`. In fact, the
+`Compare` property is not used with hash tables so it's pointless to set
 it.
 
 Once you accept that certain containers maintain data objects in an
 ordered sequence, you have to consider the problem of duplicate data
 objects. Two data objects are defined as duplicate if the container's
-Compare function returns zero when called with them as parameters.
+`Compare` function returns zero when called with them as parameters.
 Well, EZDSL enforces a strict rule: sorted containers cannot contain
 duplicate data objects. All sorted containers will raise an exception
-(with string code edsInsertDup) if you attempt to insert a data object
+(with string code `edsInsertDup`) if you attempt to insert a data object
 that compares equal to an already inserted data object.
 
 You might have decided that this is a somewhat harsh restriction.
@@ -324,15 +319,15 @@ manner: they will not accept duplicate data objects.
 What to do? Suppose you had the kind of use for a skip list that
 absolutely had to accept duplicate data objects? Firstly I would ask
 you to redesign your data object so that duplicates could not occur
-and secondly recode your Compare function so that maybe another field
+and secondly recode your `Compare` function so that maybe another field
 of the data object could be used in the comparison to remove the
 ambiguity.
 
 If all fails, one solution could be to declare a sequence long integer
 in your container descendant class. Set this to zero in your
 constructor. Make sure that your data objects have a sequence field,
-and that your Compare function checks this after your main comparison.
-Override the Insert method of the container to increment the
+and that your `Compare` function checks this after your main comparison.
+Override the `Insert` method of the container to increment the
 container's sequence field and set the data object's sequence field to
 it, and then call the inherited insert method.  This algorithm is
 shown in the example program EXINSDUP.
@@ -344,16 +339,15 @@ arrival sequence or, reverse arrival sequence, or any other
 deterministic sequence; as far as the priority queue is concerned
 duplicate data objects are exactly that, it cannot distinguish between
 them in any way. Again if this matters to you, you'll have to redefine
-your data object and Compare function to remove the anomaly.
+your data object and `Compare` function to remove the anomaly.
 
 A new feature of version 3 of EZDSL is the ability of containers to
-sort themselves when you supply an new Compare function. If the
-container is sorted and you set the Compare property to a new compare
+sort themselves when you supply a new `Compare` function. If the
+container is sorted and you set the `Compare` property to a new compare
 function, then the container will reorder its data objects according
 to that new function. It does this in the most efficient manner
 possible by reusing the internal nodes and minimizing the amount of
-extra heap space for the job. This ability is not available for the
-sorted collection.
+extra heap space for the job. 
 
 
 
@@ -374,8 +368,8 @@ When writing the unit I wanted to get away from the dependence of
 knowing about this typical node structure: I wanted to insert, append,
 push, examine, delete, erase or pop data objects without having to be
 continually reminded of the underlying algorithm. Also, I didn't want
-to have to descend my data objects from a TNode object - I would be
-forced to always use TNode descendants and couldn't use PStrings or
+to have to descend my data objects from a `TNode` object - I would be
+forced to always use `TNode` descendants and couldn't use `PString`s or
 something along those lines. Also, by divorcing myself from knowing
 about (worrying about) the node structure, I was able to make numerous
 economies in data storage and speed.
@@ -391,15 +385,15 @@ stacks and queues and similar structures do not, you can only
 reference the topmost object (they are inherently non-navigable).
 
 Also because, the node structure is hidden I was able to implement a
-node suballocator scheme (called a TNodeStore; see the source) to help
+node suballocator scheme (called a `TNodeStore`; see the source) to help
 me and the containers manage blocks of nodes, rather than just one at
 a time.  Because the nodes are generally all the same size for a given
 container type, we can take advantage of this and speed up allocations
 and deallocations of nodes, compared with using the heap. So if you
-look at the TNodeStore code you'll see things like node reuse, several
+look at the `TNodeStore` code you'll see things like node reuse, several
 containers using the same node store and so on.
 
-In 32-bit land, the TNodeStore class is fully thread-safe. Hence, just
+In 32-bit land, the `TNodeStore` class is fully thread-safe. Hence, just
 like the normal Delphi heap, you can use several different containers
 in different threads and know that their node allocation method is
 perfectly safe, despite the fact that they all use the same node
@@ -410,37 +404,37 @@ store.
 Iterators
 ----------------------------------------------------------------------
 For the navigable containers (i.e. those containers where a cursor is
-defined) an iterator method is defined. This method is called Iterate
+defined) an iterator method is defined. This method is called `Iterate`
 and can be used to perform "first that" type processing (find the
 first data object that meets a criterion) or "for all" type processing
 (for all data objects in the container perform this action).
 
-Each iterator takes three parameters: an Action routine, a direction
-flag and a ExtraData pointer. The ExtraData pointer is simply to
-enable you to pass any kind of record structure to the Action routine:
-it negates the need for global variables or for a nested Action
-routine (c.f.  Borland's TCollection in BP7). The direction flag
-(called Backwards) enables you to iterate through the container in
+Each iterator takes three parameters: an `Action` routine, a direction
+flag and a `ExtraData` pointer. The `ExtraData` pointer is simply to
+enable you to pass any kind of record structure to the `Action` routine:
+it negates the need for global variables or for a nested `Action`
+routine (c.f.  Borland's `TCollection` in BP7). The direction flag
+(called `Backwards`) enables you to iterate through the container in
 either direction: forwards or backwards.
 
-The Action routine for a call to Iterate has to be of the form:
+The `Action` routine for a call to `Iterate` has to be of the form:
 
      TIteratorProc = function (C : TAbstractContainer;
                                aData : pointer;
                                ExtraData : pointer) : boolean;
 
-where C will be the container itself, aData is the current data object
-and ExtraData is the same extra data pointer you passed to Iterate.
-The function must return True to cause the Iterate routine to continue
-iterating or False to cause the Iterate routine to stop (and return
-the data object that caused the Action routine to return False).
+where `C` will be the container itself, `aData` is the current data object
+and `ExtraData` is the same extra data pointer you passed to `Iterate`.
+The function must return `True` to cause the `Iterate` routine to continue
+iterating or `False` to cause the `Iterate` routine to stop (and return
+the data object that caused the `Action` routine to return `False`).
 
-Remember that your Action procedure cannot be a nested routine (in
+Remember that your `Action` procedure cannot be a nested routine (in
 Delphi 1.0 it must be declared 'far'; in 32-bit Delphi it must be
 declared as 'register' (i.e. the normal fastcall declaration)). A
 quick example: suppose your data objects had an integer field called
-Value and you wanted to find the sum of all the Value fields in a
-list. Your Action procedure would look like:
+`Value` and you wanted to find the sum of all the `Value` fields in a
+list. Your `Action` procedure would look like:
 
      function SumValues(C : TAbstractContainer;
                         aData : pointer;
@@ -453,7 +447,7 @@ list. Your Action procedure would look like:
        Result := true;
      end;
 
-and you would call Iterate to do the summation as follows:
+and you would call `Iterate` to do the summation as follows:
 
      var
        TotalValue : longint;
@@ -465,41 +459,41 @@ and you would call Iterate to do the summation as follows:
        {...}
      end.
 
-Notice that the SumValues procedure is explicitly declared 'far' in
+Notice that the `SumValues` procedure is explicitly declared 'far' in
 Delphi 1.0 (in 32-bit Delphi this modifier is ignored). I have found
 this method to be by far (!) the easiest method of ensuring that the
 Delphi 1.0 compiler will compile my source code without relying on the
 current value of the $F compiler define.
 
 There is one important point that you must be aware of when you are
-using the Iterate method. It is simply put: do not add or delete data
-objects from the container in your Action routine. The Iterate method
+using the `Iterate` method. It is simply put: do not add or delete data
+objects from the container in your `Action` routine. The `Iterate` method
 maintains some state information whilst you are navigating through the
 container. If you add or delete an object, this state information
 becomes invalid since the container may restructure itself internally
-to accommodate that change. The state information that Iterate depends
+to accommodate that change. The state information that `Iterate` depends
 upon will become out-of-date and may result in you seeing the same
 data objects twice, not at all, or even worse, cause access violations
 and so on. The proper thing to do is to make a note elsewhere of the
 data objects you want to add or remove from the object (use another
-container, e.g. a stack or queue), and once the Iterate method has
+container, e.g. a stack or queue), and once the `Iterate` method has
 completed to perform the additions and removals.
 
-The boolean array TBooleanArray has its own form of the iterator,
+The boolean array `TBooleanArray` has its own form of the iterator,
 designed for iterating though either the true values in the array, or
-the false ones, and in either direction. In this case, the Action
-routine for a call to Iterate has to be of the form:
+the false ones, and in either direction. In this case, the `Action`
+routine for a call to `Iterate` has to be of the form:
 
      TBooleanArrayIterator = function(C : TBooleanArray;
                                       aIndex : longint;
                                       ExtraData : pointer) : boolean;
 
-where C will be the boolean array itself, aIndex is the element number
-of the current boolean, and ExtraData is the same extra data pointer
-you passed to Iterate. The function must return True to cause the
-Iterate routine to continue iterating or False to cause the Iterate
+where `C` will be the boolean array itself, `aIndex` is the element number
+of the current boolean, and `ExtraData` is the same extra data pointer
+you passed to `Iterate`. The function must return `True` to cause the
+Iterate routine to continue iterating or `False` to cause the `Iterate`
 routine to stop (and return the index of the boolean value that caused
-the Action routine to return False).  Remember that your Action
+the `Action` routine to return `False`).  Remember that your `Action`
 procedure cannot be a nested routine (in Delphi 1.0 it must be
 declared 'far'; in 32-bit Delphi it must be declared as 'register'
 (i.e. the normal fastcall declaration)).
@@ -508,17 +502,17 @@ declared 'far'; in 32-bit Delphi it must be declared as 'register'
 
 Packages
 ----------------------------------------------------------------------
-With the release of version 3.02, I have included an EZDSL run-time
-package for each of Delphi 3, 4, 5, and 6.
+From the release of version 3.02, I included an EZDSL run-time
+package for each of Delphi 3, 4, 5, and 6, or later.
 
-The package names for version 3.02 are EZDSL3c3.DPL for Delphi 3,
-EZDSL3c4.BPL for Delphi 4, EZDSL3c5.BPL for Delphi 5, and EZDSL3c6.BPL
-for Delphi 6. The naming convention I am using is EZDSLnxc where n is
+The naming convention I am using is EZDSLnxc where n is
 the major version number of EZDSL, x is the minor version number
 expressed as a alphabetic character (.00=a, .01=b, etc), and c is the
 Delphi compiler major version number. Hence EZDSL3a3.DPL is EZDSL
 version 3.00 for Delphi 3. The Delphi 4 version of the package would
 be EZDSL3a4.DPL.
+
+The package name for Delphi XE or later is EZDSL3XE.BPL.
 
 I hereby reserve the rights to names of the form EZDSLnxc.DPL. If you
 alter EZDSL and create a run-time package from your altered code,
@@ -529,10 +523,7 @@ have an application already using the official EZDSL package.
 The package is a run-time package, in other words it does not install
 directly into the Delphi IDE. In fact, it would only be used if you
 were creating a program that used run-time packages. If you do so,
-it's best to copy the package to a directory on your path. Generally
-you use \WINDOWS\SYSTEM or \WINNT\SYSTEM32; however, be warned that
-Microsoft are deprecating changing the contents of the Windows system
-directory.
+it's best to copy the package to a relevant directory on your path. 
 
 Please refer to your Delphi documentation for more information on
 packages.
@@ -557,12 +548,12 @@ different threads use and change the same variable at the same time.
 Without some kind of synchronization control, the two threads will
 trash the variable. For a classic example, let's assume that our two
 threads are manipulating a single linked list (one of EZDSL's
-TLinkList objects). Suppose that they both want to insert a new data
+`TLinkList` objects). Suppose that they both want to insert a new data
 object into the linked list at the same time. The first thread gets
-control, positions the linked list cursor and then calls InsertBefore.
-Half way through the execution of the InsertBefore method, the second
+control, positions the linked list cursor and then calls `InsertBefore`.
+Half way through the execution of the `InsertBefore` method, the second
 thread gains control, and tries to position the cursor and call
-InsertBefore itself. The problem is that InsertBefore breaks the
+`InsertBefore` itself. The problem is that `InsertBefore` breaks the
 list's chain of pointers internally in order to insert the new data
 object. If the thread doing the job loses control to another, the
 linked list is in a precarious state: half broken. It is extremely
@@ -607,7 +598,7 @@ locking code uses Win32's critical sections, and hence is fairly fast,
 it still slows down the code unnecessarily for those who don't use it.
 
 Another small variation on this theme is to use a boolean field
-(called BeThreadSafe or something) to say whether to lock or not. If
+(called `BeThreadSafe` or something) to say whether to lock or not. If
 the boolean was false, no locking would occur, if true, locking would
 be done. I rejected this as well, since the try..finally block would
 still have to be there and this consumes cycles unnecessarily. Also
@@ -630,8 +621,8 @@ afterwards. Basically your code looks like this:
 The reason I rejected this option is that it's too easy to forget. For
 example, moving the cursor in a single linked list will rearrange the
 links in the list: you must protect the linked list before calling
-Next or Prev. Forgetting this kind of gotcha is too easy. Another one
-is Iterate: you must protect the container before navigating through
+`Next` or `Prev`. Forgetting this kind of gotcha is too easy. Another one
+is `Iterate`: you must protect the container before navigating through
 it, otherwise you'd have a complete disaster on your hands if thread 1
 was navigating at the same time that thread 2 was adding data objects.
 
@@ -656,7 +647,7 @@ containers. You use them like this:
 Here the code is explicit: you acquire access to the stack and in
 return you get a stack variable to use. Once you release access you no
 longer have access to that variable. To get a stack variable to use,
-you must call the AcquireAccess method of the special protected
+you must call the `AcquireAccess` method of the special protected
 object. You can't forget.
 
 So this means you have the best of both worlds. Unprotected, fast
@@ -691,9 +682,9 @@ debugging routine that checks whether something is true.  If this is
 the case the program continues. If it is false, the program is
 terminated immediately by writing out a string explaining why (we
 shall however be raising an exception).  In C this is accomplished by
-the Assert macro.  Compile your C program in one way during testing
-and the Assert macro expands to this kind of check; compile it in
-another way (for your production app.) and the Assert macro 'expands'
+the `Assert` macro.  Compile your C program in one way during testing
+and the `Assert` macro expands to this kind of check; compile it in
+another way (for your production app.) and the `Assert` macro 'expands'
 to a null statement.  As you see, during testing you have the full set
 of checks to aid in debugging (slow but safe), and once you have fully
 tested the application you can turn them all off to obtain the full
@@ -701,29 +692,29 @@ speed.
 
 Unfortunately in Delphi these kind of preprocessor macros are not
 available, at least not until Delphi 3. This release of the Delphi
-compiler came with a proper Assert routine: compile it one way with a
+compiler came with a proper `Assert` routine: compile it one way with a
 compiler define set and assertion checks are performed, compile it
 another way and the check 'disappears'. Unfortunately, with my goal of
 supporting all the Delphis, I could not use this nifty language
 feature. Instead, I worked round the problem by having a compiler
 define called DEBUG which firstly automatically activates the $D+ and
 $L+ compiler options, and secondly causes a lot of methods to have a
-call to Assert at the start of the routine to check that various entry
+call to `Assert` at the start of the routine to check that various entry
 conditions are met.
 
-An example should make this clear. The TStack object has a method
-called Pop to remove the topmost data object from the stack. If the
-stack is empty, I count calling Pop as a programming mistake: you
+An example should make this clear. The `TStack` object has a method
+called `Pop` to remove the topmost data object from the stack. If the
+stack is empty, I count calling `Pop` as a programming mistake: you
 really should check for the stack being empty in your program prior to
-calling Pop. Of course Pop could have an if statement within it that
+calling `Pop`. Of course `Pop` could have an if statement within it that
 did this check for you, but in the *majority* of cases the stack won't
-be empty when Pop is called and in the *majority* of cases when you
-use Pop, you'll have some kind of loop in your program which is
+be empty when `Pop` is called and in the *majority* of cases when you
+use `Pop`, you'll have some kind of loop in your program which is
 continually checking whether the stack is empty or not anyway. In my
-mind, having a check for an empty stack within Pop is safe but slow.
-So, instead, Pop has a call to an Assert procedure at the start
+mind, having a check for an empty stack within `Pop` is safe but slow.
+So, instead, `Pop` has a call to an `Assert` procedure at the start
 (activated by the DEBUG compiler define) that checks to see whether
-the stack is empty. Here is the code for Pop:
+the stack is empty. Here is the code for `Pop`:
 
      function TStack.Pop : pointer;
      var
@@ -738,12 +729,12 @@ the stack is empty. Here is the code for Pop:
        acDisposeNode(Node);
      end;
 
-As you see, if the DEBUG compiler define is set the EZAssert procedure
+As you see, if the DEBUG compiler define is set the `EZAssert` procedure
 is called, and this checks whether the stack is non-empty first. If
-the assertion is true, the Pop method continues and executes the code
+the assertion is true, the `Pop` method continues and executes the code
 that pops the data object off the stack. If the stack is empty an
-EEZAssertionError exception is raised inside the EZAssert procedure
-(the constant ascEmptyPop is a string code for a string in a
+`EEZAssertionError` exception is raised inside the `EZAssert` procedure
+(the constant `ascEmptyPop` is a string code for a string in a
 stringtable resource).  If DEBUG is not set the code runs at full
 speed.
 
@@ -757,7 +748,7 @@ to thoroughly test your program with the DEBUG define set, before you
 turn it off.
 
 The other type of error (that which occurs infrequently and is due to
-some 'at the limit' problem) will cause an EEZContainerError exception
+some 'at the limit' problem) will cause an `EEZContainerError` exception
 to be raised. The strings that the exception class uses are defined in
 a stringtable resource (EZDSLCTS.RES, string codes in EZDSLCTS.PAS),
 so that you may alter them at will (for example, to translate them
@@ -822,9 +813,10 @@ Of Compilers and Caveats
 ----------------------------------------------------------------------
 I have tested the EZDSL units with Borland Delphi versions 1, 2, 3, 4,
 5, and 6. In each case, I used the version of the compiler with all
-patches applied.
+patches applied. Later Delphi versions? Not so much (remember: I don't
+program much in Delphi any more).
 
-The EZDSL library has grown out of both my own personal work and my
+The EZDSL library grew out of both my own personal work and my
 work at TurboPower. If you are familiar with TurboPower products the
 iterator idea is lifted from Orpheus' sparse array class.  In return the
 container classes in TurboPower's SysTools (written by Kim Kokkonen)
@@ -968,7 +960,7 @@ Global Types, Constants and Variables
   are defined in EZDSLCTS.RC in a stringtable, and compiled into the
   EZDSLCTS.R16 resource file for Delphi 1, and EZDSLCTS.R32 for the
   32-bit Delphis. As Windows only allows one stringtable per
-  application ezdsStartOffset can be altered to any constant value so
+  application `ezdsStartOffset` can be altered to any constant value so
   that the string constants don't clash with your current application.
 
 ### Declaration
@@ -992,8 +984,8 @@ Global Types, Constants and Variables
                                                        of object;
 #### Description
   Function prototype for comparing two data objects. The function must
-  return a negative number if Data1 is less than Data2, 0 if they are
-  equal, and a positive number if Data1 is greater than Data2. The
+  return a negative number if `Data1` is less than `Data2`, 0 if they are
+  equal, and a positive number if `Data1` is greater than `Data2`. The
   routine you write must be a method of a class.  Defined in
   EZDSLBSE.PAS.
 
@@ -1009,7 +1001,7 @@ Global Types, Constants and Variables
       TDupDataFunc = function (aData : pointer) : pointer of object;
 #### Description
   Function prototype for duplicating data objects. The function must
-  create a duplicate to the aData data object and return it as the
+  create a duplicate to the `aData` data object and return it as the
   function result.  If the duplication fails for some reason, then the
   function must raise an exception. The routine you write must be a
   method of a class. Defined in EZDSLBSE.PAS.
@@ -1019,17 +1011,17 @@ Global Types, Constants and Variables
       TIterator = function (C : TAbstractContainer; aData : pointer;
                             ExtraData : pointer) : boolean;
 #### Description
-  Function prototype for an Iterate method iterator. C is the
-  container whose Iterate method was called. aData is the current data
-  object. ExtraData is the extra pointer you passed to Iterate. The
-  function must return true if Iterate is to continue iterating, false
-  if Iterate is to stop immediately.  Defined in EZDSLBSE.PAS.
+  Function prototype for an `Iterate` method iterator. `C` is the
+  container whose `Iterate` method was called. `aData` is the current data
+  object. `ExtraData` is the extra pointer you passed to `Iterate`. The
+  function must return true if `Iterate` is to continue iterating, false
+  if `Iterate` is to stop immediately.  Defined in EZDSLBSE.PAS.
 
 ### Declaration
     type
       TListCursor = longint;
 #### Description
-  Navigation cursor for TDList and TSkipList (double linked & skip
+  Navigation cursor for `TDList` and `TSkipList` (double linked & skip
   lists). Defined in EZDSLBSE.PAS.
 
 ### Declaration
@@ -1043,7 +1035,7 @@ Global Types, Constants and Variables
     type
       TTreeCursor = longint;
 #### Description
-  Navigation cursor for TBinTree and descendants (binary trees).
+  Navigation cursor for `TBinTree` and descendants (binary trees).
   Defined in EZDSLBSE.PAS.
 
 ### Declaration
@@ -1076,27 +1068,27 @@ Stand-alone routines (all within EZDSLSUP.PAS)
     function  EZIntDupData(aData : pointer) : pointer;
 #### Description
   Intended as a data duplication function for containers:  duplicates
-  a longint. Essentially it returns aData.
+  a longint. Essentially it returns `aData`.
 
 ### Declaration
     function  EZStrNew(const S : string) : PEZString;
 #### Description
-  Allocates a memory block on the heap, copies S to it, and returns
-  the pointer to the memory block. Exactly equivalent to NewStr in
-  Delphi 1.0. In Delphi 2/3 EZStrNew provides a pointer to a short
+  Allocates a memory block on the heap, copies `S` to it, and returns
+  the pointer to the memory block. Exactly equivalent to `NewStr` in
+  Delphi 1.0. In Delphi 2/3 `EZStrNew` provides a pointer to a short
   string, not a long string.
 
 ### Declaration
     procedure EZStrDispose(PS : PEZString);
 #### Description
-  Disposes of a string allocated on the heap by EZStrNew.
+  Disposes of a string allocated on the heap by `EZStrNew`.
 
 ### Declaration
     function  EZStrCompare(Data1, Data2 : pointer) : integer;
 #### Description
   Intended as a compare function for containers: compares two
   strings in case-sensitive manner. The strings are assumed to have
-  been assigned with the EZStrNew routine, in other words are short
+  been assigned with the `EZStrNew` routine, in other words are short
   strings in Delphi 2/3.
 
 ### Declaration
@@ -1104,14 +1096,14 @@ Stand-alone routines (all within EZDSLSUP.PAS)
 #### Description
   Intended as a data disposal procedure for containers: disposes a
   string. The string is assumed to have been assigned with the
-  EZStrNew routine.
+  `EZStrNew` routine.
 
 ### Declaration
     function  EZStrDupData(aData : pointer) : pointer;
 #### Description
   Intended as a data duplication function for containers:  duplicates
-  a string. The string is assumed to have been assigned with the
-  EZStrNew.
+  a string. The string is assumed to have been assigned with 
+  `EZStrNew`.
 
 
 
@@ -1136,7 +1128,7 @@ This type is an abstract container class, an ancestor to all the other
 containers. Most methods have to be or must be overridden, but it
 forms a base object from which more complex objects can be derived.
 Please review the descriptions of the properties defined below; the
-most important are Compare, and DisposeData; DupData is only required
+most important are `Compare`, and `DisposeData`; `DupData` is only required
 if you are going to be cloning containers.
 
 Do not create an instance of this object type.
@@ -1153,43 +1145,43 @@ Properties
 ### Declaration
     property Compare : TCompareFunc
 #### Description
-  The container's Compare function. If you don't 'override' it by
+  The container's `Compare` function. If you don't 'override' it by
   setting the property to a function in your code, the default one
-  raises an exception when Compare is used. 
+  raises an exception when `Compare` is used. 
 
-  If a container's IsSorted property  returns true, the Compare
+  If a container's IsSorted property returns true, the `Compare`
   property must be set.
 
   If there are data objects present in the container, and the
-  container is sorted, then setting the Compare property will cause
-  the container to be sorted according to the new Compare function.
+  container is sorted, then setting the `Compare` property will cause
+  the container to be sorted according to the new `Compare` function.
 
-  For non-sorted containers, the Compare function will be used in a
+  For non-sorted containers, the `Compare` function will be used in a
   search to determine whether the data object you are looking for is
-  present or not. In this restricted case, Compare is just used for
+  present or not. In this restricted case, `Compare` is just used for
   its zero (i.e., equal) and non-zero (i.e., not equal) results.
-  Setting Compare in a non-sorted container has no immediate effect.
+  Setting `Compare` in a non-sorted container has no immediate effect.
 
-  Note that the THashTable container does not use the Compare function
+  Note that the `THashTable` container does not use the `Compare` function
   under any circumstances.
 
 ### Declaration
     property DisposeData : TDisposeDataProc
 #### Description
-  The container's DisposeData procedure. If you don't 'override' it,
+  The container's `DisposeData` procedure. If you don't 'override' it,
   the default one raises an exception if the container is a data owner
   and it tries to dispose of a data object.
 
-  WARNING: your DisposeData procedure may be called with a nil pointer
+  WARNING: your `DisposeData` procedure may be called with a nil pointer
   so please cater for this possibility and don't try to free a nil
   pointer. It doesn't work.
 
 ### Declaration
     property DupData : TDupDataFunc
 #### Description
-  The container's DupData function. If you don't 'override' it, the
-  default one raises an exception when it is used. DupData is used by
-  the Clone constructor when the new container is a data owner.
+  The container's `DupData` function. If you don't 'override' it, the
+  default one raises an exception when it is used. `DupData` is used by
+  the `Clone` constructor when the new container is a data owner.
 
 ### Declaration
     property IsDataOwner : boolean
@@ -1197,20 +1189,20 @@ Properties
   READ ONLY. True if the container was created as a data owner, False
   otherwise. It is not possible to change this property after the
   container has been created. Data owners will destroy data objects at
-  certain times, e.g., during Empty.
+  certain times, e.g., during `Empty`.
 
 ### Declaration
     property IsSorted : boolean
 #### Description
   Returns true if the container is sorted, false otherwise.
 
-  Setting the IsSorted property may be ignored depending on the
+  Setting the `IsSorted` property may be ignored depending on the
   container. Certain containers in EZDSL are always non-sorted and so
-  setting IsSorted to true will be ignored. Other containers in EZDSL
-  are always sorted and so setting IsSorted to false will be ignored.
+  setting `IsSorted` to true will be ignored. Other containers in EZDSL
+  are always sorted and so setting `IsSorted` to false will be ignored.
   If the container's 'sortedness' attribute can be changed, then
   setting it to true will cause the data objects in the container to
-  be reordered according to the Compare function.
+  be reordered according to the `Compare` function.
 
     Container       IsSorted values
     -------------------------------
@@ -1232,26 +1224,26 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean); virtual;
 #### Description
-  Creates the object. Descendants will (must) set the NodeSize field
+  Creates the object. Descendants will (must) set the `NodeSize` field
   before calling this as an inherited constructor. If non-zero, this
   method gets a pointer to the relevant node store and stores it in a
   field in the container for use when allocating or deallocating
-  nodes. If NodeSize is zero this constructor assumes that the
+  nodes. If `NodeSize` is zero this constructor assumes that the
   descendant will be taking care of allocating & freeing nodes.  
 
   Create sets the internal count of items to zero.
 
-  The DataOwner parameter determines whether the container is to own
+  The `DataOwner` parameter determines whether the container is to own
   (i.e., can dispose of) its data objects. If true, then the container
-  will dispose of data objects by calling DisposeData when required.
+  will dispose of data objects by calling `DisposeData` when required.
 
 ### Declaration
     destructor Destroy; override;
 #### Description
-  Destroys the container. First it calls the virtual Empty method,
+  Destroys the container. First it calls the virtual `Empty` method,
   enabling the descendant to clean up properly. If the container is a
   data owner, all data objects will be destroyed as well by calling
-  DisposeData, Destroy detaches the container from the node store if
+  `DisposeData`, `Destroy` detaches the container from the node store if
   one was being use for node allocation.
 
 ### Declaration
@@ -1259,13 +1251,13 @@ Interfaced methods
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                     virtual; abstract;
 #### Description
-  Constructor to create a 'clone' (ie an exact copy) of the Source
+  Constructor to create a 'clone' (ie an exact copy) of the `Source`
   container and all its data objects.  Descendants will override this
   constructor without fail. If you are going to use this method you
-  must override the DupData function as well.  You may specify a new
-  Compare function for the cloned container, in which case, if the
+  must override the `DupData` function as well.  You may specify a new
+  `Compare` function for the cloned container, in which case, if the
   container maintains a sorted order, the new container will have its
-  data objects in another order. If DataOwner is true, the new
+  data objects in another order. If `DataOwner` is true, the new
   container will own its data objects and hence all the objects in the
   original container will be duplicated. If false, the data objects
   (i.e., the pointers) will be copied over.  
@@ -1277,14 +1269,14 @@ Interfaced methods
   descendant will have its own preferred efficient method of doing
   this.
 
-  NOTE: DisposeData will be called for all objects in the container if
+  NOTE: `DisposeData` will be called for all objects in the container if
   the container owns its data objects.  
 
 ### Declaration
     function IsEmpty : boolean;
 #### Description
   Returns true if the container is empty; i.e., it contains no data
-  objects. The method is just a shorthand for checking that the Count
+  objects. The method is just a shorthand for checking that the `Count`
   property is zero.
 
 
@@ -1304,9 +1296,9 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean); override;
 #### Description
-  Creates the stack by calling the ancestor's Create after setting a
-  node size of 8.  If DataOwner is true, the new stack will own its
-  data objects. Stacks are created as unsorted objects (IsSorted will
+  Creates the stack by calling the ancestor's `Create` after setting a
+  node size of 8.  If `DataOwner` is true, the new stack will own its
+  data objects. Stacks are created as unsorted objects (`IsSorted` will
   return false).
 
 ### Declaration
@@ -1314,20 +1306,20 @@ Interfaced methods
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                             override;
 #### Description
-  Creates a copy of a Source stack. If DataOwner is true, the data
+  Creates a copy of a `Source` stack. If `DataOwner` is true, the data
   objects in the Source stack are duplicated for the new one. If
   false, the data objects are just copied over to the new stack. The
   data objects in the new stack will be popped off in the same order
   as the original stack.
 
-  If Source is not a TStack instance an exception (escBadSource) is
+  If `Source` is not a `TStack` instance an exception (`escBadSource`) is
   raised.
 
 ### Declaration
     procedure Empty; override;
 #### Description
-  Repeatedly calls the Pop method until the stack is empty. If the
-  stack is a data owner, DisposeData will be called for each data
+  Repeatedly calls the `Pop` method until the stack is empty. If the
+  stack is a data owner, `DisposeData` will be called for each data
   object to destroy it.
 
 ### Declaration
@@ -1335,7 +1327,7 @@ Interfaced methods
 #### Description
   Returns the data object at the top of the stack without popping it. 
 
-  In DEBUG mode, an assertion error (ascEmptyExamine) will occur if
+  In DEBUG mode, an assertion error (`ascEmptyExamine`) will occur if
   the stack is empty.  
 
 ### Declaration
@@ -1343,13 +1335,13 @@ Interfaced methods
 #### Description
   Pops the data object from the top of the stack and returns it.
 
-  In DEBUG mode, an assertion error (ascEmptyPop) will occur if the
+  In DEBUG mode, an assertion error (`ascEmptyPop`) will occur if the
   stack is empty.
 
 ### Declaration
     procedure Push(aData : pointer);
 #### Description
-  Pushes the data object aData onto the top of the stack.
+  Pushes the data object `aData` onto the top of the stack.
 
 
 
@@ -1367,21 +1359,21 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean); override;
 #### Description
-  Creates the queue by calling the ancestor's Create after setting a
-  node size of 8.  If DataOwner is true, the new queue will own its
+  Creates the queue by calling the ancestor's `Create` after setting a
+  node size of 8.  If `DataOwner` is true, the new queue will own its
   data objects.
 
 ### Declaration
     procedure Append(aData : pointer);
 #### Description
-  Adds the data object aData to the tail end of the queue.
+  Adds the data object `aData` to the tail end of the queue.
 
 ### Declaration
     constructor Clone(Source : TAbstractContainer;
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                             override;
 #### Description
-  Creates a copy of the Source queue. If DataOwner is true, the data
+  Creates a copy of the `Source` queue. If `DataOwner` is true, the data
   objects in the original queue will be duplicated for the cloned
   queue. If false, the data objects are copied. The data objects will
   be retrieved in the same order as the original queue.
@@ -1389,8 +1381,8 @@ Interfaced methods
 ### Declaration
     procedure Empty; override;
 #### Description
-  Repeatedly calls the Pop method until the queue is empty. If the
-  queue is a data owner, DisposeData will be called to destroy the
+  Repeatedly calls the `Pop` method until the queue is empty. If the
+  queue is a data owner, `DisposeData` will be called to destroy the
   data objects as they are popped.
 
 ### Declaration
@@ -1398,7 +1390,7 @@ Interfaced methods
 #### Description
   Returns the data from the top of the queue without popping it.
 
-  In DEBUG mode, an assertion error (ascEmptyExamine) will occur if
+  In DEBUG mode, an assertion error (`ascEmptyExamine`) will occur if
   the queue is empty.
 
 ### Declaration
@@ -1408,7 +1400,7 @@ Interfaced methods
   Even if the queue is a data owner, the data object is still returned
   (it will not be destroyed).
 
-  In DEBUG mode, an assertion error (ascEmptyPop) will occur if the
+  In DEBUG mode, an assertion error (`ascEmptyPop`) will occur if the
   queue is empty.
 
 
@@ -1420,8 +1412,8 @@ allows objects to be added to, or removed from the front or back of
 the queue. This particular implementation of a deque just allows queue
 jumpers, ie data objects can also be pushed into the front of the
 queue, giving it stack-like behavior (Flamig calls this variant a
-Staque, see references). It is descended from the basic TQueue and
-inherits Pop and Append.
+Staque, see references). It is descended from the basic `TQueue` and
+inherits `Pop` and `Append`.
 
 
 Interfaced methods
@@ -1430,7 +1422,7 @@ Interfaced methods
 ### Declaration
     procedure Push(aData : pointer);
 #### Description
-  Pushes the data object aData to the front of the deque.
+  Pushes the data object `aData` to the front of the deque.
 
 
 
@@ -1441,14 +1433,14 @@ smallest data object in the queue will be popped first (rather than
 the 'oldest'). Another name for a priority queue is a heap (not to be
 confused with Delphi's heap where memory blocks are allocated and
 freed).  As it imposes a sort order on the data objects, you must
-override the Compare function.
+override the `Compare` function.
 
 If the Compare method returns values in the 'normal' sense (i.e.,
-Compare returns a negative number if Data1 < Data2, 0 if Data1 =
-Data2, and a positive number otherwise), then data objects will be
+`Compare` returns a negative number if `Data1` < `Data2`, 0 if `Data1` =
+`Data2`, and a positive number otherwise), then data objects will be
 popped off smallest first, in other words, in increasing order.
-However, if Compare returns values in the 'reverse' sense (i.e.,
-returning negative if Data1 > Data2, etc), then elements will be
+However, if `Compare` returns values in the 'reverse' sense (i.e.,
+returning negative if `Data1` > `Data2`, etc), then elements will be
 popped off largest first, in other words, in decreasing order. Thus by
 carefully selecting Compare, this object will provide the classic min-
 heap and max-heap data structures.
@@ -1466,8 +1458,8 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the priority queue by calling the ancestor's Create after
-  setting a node size of 16.  If DataOwner is true, the new queue will
+  Creates the priority queue by calling the ancestor's `Create` after
+  setting a node size of 16.  If `DataOwner` is true, the new queue will
   own its data objects.
 
 ### Declaration
@@ -1482,15 +1474,15 @@ Interfaced methods
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                             override;
 #### Description
-  Creates a copy of the Source queue. If DataOwner is true, the data
+  Creates a copy of the `Source` queue. If `DataOwner` is true, the data
   objects in the original queue will be duplicated for the cloned
   queue. If false, the data objects are copied.
 
 ### Declaration
     procedure Empty; override;
 #### Description
-  Repeatedly calls the Pop method until the queue is empty. If the
-  queue is a data owner, DisposeData will be called to destroy the
+  Repeatedly calls the `Pop` method until the queue is empty. If the
+  queue is a data owner, `DisposeData` will be called to destroy the
   data objects as they are popped.
 
 ### Declaration
@@ -1499,12 +1491,12 @@ Interfaced methods
   Returns the data from the top of the queue without popping it.
 
   Because the data objects are sorted, you will retrieve the smallest
-  data object with this method, providing that Compare returns values
-  in the 'normal' sense. If, on the other hand, Compare is returning
+  data object with this method, providing that `Compare` returns values
+  in the 'normal' sense. If, on the other hand, `Compare` is returning
   values in the 'reverse' sense, you'll get the largest data object
   instead.
 
-  In DEBUG mode, an assertion error (ascEmptyExamine) will occur if
+  In DEBUG mode, an assertion error (`ascEmptyExamine`) will occur if
   the queue is empty.
 
 ### Declaration
@@ -1514,17 +1506,17 @@ Interfaced methods
   Even if the queue is a data owner, the data object is still returned
   (it will not be destroyed).
 
-  If Compare works in the 'normal' sense (ie returns a negative value
+  If `Compare` works in the 'normal' sense (ie returns a negative value
   for 'less than') then the data object will be the smallest,
   otherwise the data object will be the largest.
 
-  In DEBUG mode, an assertion error (ascEmptyPop) will occur if the
+  In DEBUG mode, an assertion error (`ascEmptyPop`) will occur if the
   queue is empty.
 
 ### Declaration
     function Replace(aData : pointer) : pointer;
 #### Description
-  Equivalent to an Append followed by a Pop, but faster since it uses
+  Equivalent to an `Append` followed by a `Pop`, but faster since it uses
   an efficient algorithm. 
 
   Note that the same data object could be returned (it may be smaller
@@ -1540,16 +1532,16 @@ next or previous data object. You cannot directly jump to the Nth data
 object, instead you have to walk the list from the beginning counting
 as you go. This list implementation has an implied 'cursor' which
 points to the current data object, you move this cursor along the list
-by means of the list's methods (eg Next and Prev). You can examine the
+by means of the list's methods (eg `Next` and `Prev`). You can examine the
 data object that the cursor is pointing to, or insert a new one before
 or after the cursor, or delete the data object at the cursor (unlink
 it).
 
 There are two special cursor positions associated with this list:
-before the first data object (known as BeforeFirst) and after the last
-data object (known as AfterLast). Even in an empty list these are
+before the first data object (known as `BeforeFirst`) and after the last
+data object (known as `AfterLast`). Even in an empty list these are
 deemed different. In the diagram of a linked list below the three data
-objects are a, b and c, and the internal cursor is pointing at c:
+objects are `a`, `b` and `c`, and the internal cursor is pointing at `c`:
 
      BeforeFirst --> a --> b --> c --> AfterLast
                                  |
@@ -1558,13 +1550,13 @@ objects are a, b and c, and the internal cursor is pointing at c:
 As a convenience to the programmer, this implementation of a linked
 list allows the data objects to be maintained in a sorted order. To do
 this there are some practical and some theoretical considerations. The
-practical ones first: you must override Compare and you must use
-InsertSorted to insert data objects into the list. If the list is
-already sorted and you replace the Compare function, the list will be
+practical ones first: you must override `Compare` and you must use
+`InsertSorted` to insert data objects into the list. If the list is
+already sorted and you replace the `Compare` function, the list will be
 reordered. The theoretical considerations are to do with the linear
 sequential nature of a linked list: to find where to insert a data
 object the list must start at the beginning of the list and walk the
-list calling Compare for each data object it encounters until it finds
+list calling `Compare` for each data object it encounters until it finds
 the place where the new data object can be inserted. A time-consuming
 process as you can appreciate. You should only use sorted linked lists
 if the list is built only once or if the number of data objects in the
@@ -1588,8 +1580,8 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the object by calling the ancestor's Create after setting a
-  node size of 8.  If DataOwner is true, the new list will own its
+  Creates the object by calling the ancestor's `Create` after setting a
+  node size of 8.  If `DataOwner` is true, the new list will own its
   data objects.
 
 
@@ -1598,7 +1590,7 @@ Interfaced methods
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                             override;
 #### Description
-  Creates a copy of the Source list. If the original list was sorted
+  Creates a copy of the `Source` list. If the original list was sorted
   then the cloned list is also sorted.
 
 ### Declaration
@@ -1606,64 +1598,64 @@ Interfaced methods
 #### Description
   Unlinks the current data object but does not dispose of it. The
   internal cursor is moved to the next data object in the list, or to
-  the AfterLast position if there are no more objects after it.
+  the `AfterLast` position if there are no more objects after it.
 
-  In DEBUG mode, an assertion error (ascDeleteEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascDeleteEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     procedure Empty; override;
 #### Description
-  Walks the list, calling Erase for every data object it finds.
+  Walks the list, calling `Erase` for every data object it finds.
 
 ### Declaration
     procedure Erase;
 #### Description
-  Works like Delete, but also disposes the data object by calling
-  DisposeData if the list owns its data objects.
+  Works like `Delete`, but also disposes the data object by calling
+  `DisposeData` if the list owns its data objects.
 
 ### Declaration
     function Examine : pointer;
 #### Description
   Returns the data object the cursor is pointing to.
 
-  In DEBUG mode, an assertion error (ascExamineEdges) will occur if
-  the cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascExamineEdges`) will occur if
+  the cursor is at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     procedure InsertAfter(aData : pointer);
 #### Description
   Inserts the data object aData after the cursor for an unsorted list.
-  For a sorted list you should use InsertSorted to insert new data
+  For a sorted list you should use `InsertSorted` to insert new data
   objects.
 
-  In DEBUG mode, an assertion error (ascInsertEdges) will occur if the
-  cursor is at AfterLast.
+  In DEBUG mode, an assertion error (`ascInsertEdges`) will occur if the
+  cursor is at `AfterLast`.
 
-  In DEBUG mode, an assertion error (ascIsSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsSortedList`) will occur if
   the list is sorted.
 
 ### Declaration
     procedure InsertBefore(aData : pointer);
 #### Description
-  Inserts the data object aData before the cursor for an unsorted
-  list. For a sorted list you should use InsertSorted to insert new
+  Inserts the data object `aData` before the cursor for an unsorted
+  list. For a sorted list you should use `InsertSorted` to insert new
   data objects.
 
-  In DEBUG mode, an assertion error (ascInsertEdges) will occur if the
+  In DEBUG mode, an assertion error (`ascInsertEdges`) will occur if the
   cursor is at BeforeFirst.
 
-  In DEBUG mode, an assertion error (ascIsSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsSortedList`) will occur if
   the list is sorted.
 
 ### Declaration
     procedure InsertSorted(aData : pointer);
 #### Description
-  Inserts the data object aData into a sorted list. For an unsorted
-  list you should use InsertAfter or InsertBefore to insert new data
+  Inserts the data object `aData` into a sorted list. For an unsorted
+  list you should use `InsertAfter` or `InsertBefore` to insert new data
   objects.
 
-  In DEBUG mode, an assertion error (ascIsNotSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsNotSortedList`) will occur if
   the list is not sorted.
 
 ### Declaration
@@ -1682,31 +1674,31 @@ Interfaced methods
                      Backwards : boolean;
                      ExtraData : pointer) : pointer;
 #### Description
-  Walks the list from the start (if Backwards is False) or from the
-  end (if Backwards is True) and calls Action for each data object
-  found.  If Action returns False for a data object, then Iterate
-  immediately returns with that data object; if Action always returns
-  True then this method will return nil.  ExtraData is a pointer to
-  any other data that you may want Action to use.
+  Walks the list from the start (if `Backwards` is False) or from the
+  end (if `Backwards` is True) and calls `Action` for each data object
+  found.  If `Action` returns False for a data object, then `Iterate`
+  immediately returns with that data object; if `Action` always returns
+  True then this method will return nil.  `ExtraData` is a pointer to
+  any other data that you may want `Action` to use.
 
 ### Declaration
     procedure Join(List : TLinkList);
 #### Description
-  Adds all the data objects in List to the current list, placing them
-  after the cursor. List is then destroyed. To add the data objects
-  before all the current ones, call SetBeforeFirst first; to add them
-  after all the current ones, call SetAfterLast and Prev first. 
+  Adds all the data objects in `List` to the current list, placing them
+  after the cursor. `List` is then destroyed. To add the data objects
+  before all the current ones, call `SetBeforeFirst` first; to add them
+  after all the current ones, call `SetAfterLast` and `Prev` first. 
 
-  Note that if the destination list is sorted, the nodes from List are
+  Note that if the destination list is sorted, the nodes from `List` are
   added in sorted order and it doesn't matter where the cursor is
   positioned.
 
-  In DEBUG mode, an assertion error (ascCannotJoinHere) will occur if
-  the cursor is at AfterLast.  
+  In DEBUG mode, an assertion error (`ascCannotJoinHere`) will occur if
+  the cursor is at `AfterLast`.  
 
   Please note that both lists concerned must either be data owners or
-  not. You cannot Join a list that is a data owner to one that is not.
-  In DEBUG mode, an assertion error (ascCannotJoinData) will occur if
+  not. You cannot `Join` a list that is a data owner to one that is not.
+  In DEBUG mode, an assertion error (`ascCannotJoinData`) will occur if
   you try.
 
 ### Declaration
@@ -1714,50 +1706,50 @@ Interfaced methods
 #### Description
   Moves the cursor to the next data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtEnd) will occur if
-  the cursor is at AfterLast.
+  In DEBUG mode, an assertion error (`ascAlreadyAtEnd`) will occur if
+  the cursor is at `AfterLast`.
 
 ### Declaration
     procedure Prev;
 #### Description
   Moves the cursor to the previous data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtStart) will occur if
-  the cursor is at BeforeFirst.
+  In DEBUG mode, an assertion error (`ascAlreadyAtStart`) will occur if
+  the cursor is at `BeforeFirst`.
 
 ### Declaration
     function Replace(aData : pointer) : pointer;
 #### Description
-  Replaces the data object at the cursor with aData and returns the
+  Replaces the data object at the cursor with `aData` and returns the
   replaced data object. Note that for sorted lists, the cursor might
-  be moved and will point to the aData data object..
+  be moved and will point to the `aData` data object.
 
-  In DEBUG mode an assertion error will occur (ascReplaceEdges) if the
-  cursor is currently at BeforeFirst or AfterLast.
+  In DEBUG mode an assertion error will occur (`ascReplaceEdges`) if the
+  cursor is currently at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     function Search(aData : pointer) : boolean;
 #### Description
-  Returns true if the data object aData is found in the list (Compare
+  Returns true if the data object `aData` is found in the list (`Compare`
   must return 0 between it and one of the data objects in the list)
   and the cursor is left pointing at the found data object.
 
   If the data object was not found it returns false. If the list is
   sorted, it leaves the cursor just past where the data object could
   be inserted. If the list is not sorted, the cursor is left in the
-  AfterLast position.
+  `AfterLast` position.
 
 ### Declaration
     procedure SetAfterLast;
 #### Description
   Moves the cursor after all the data objects in the list. Calling
-  Prev from this position gives you the last object on the list.
+  `Prev` from this position gives you the last object on the list.
 
 ### Declaration
     procedure SetBeforeFirst;
 #### Description
   Moves the cursor before all the data objects in the list. Calling
-  Next from this position gives you the first object on the list.
+  `Next` from this position gives you the first object on the list.
 
 ### Declaration
     function Split : TLinkList;
@@ -1766,26 +1758,26 @@ Interfaced methods
   list, and moving all the data objects from the cursor onwards to the
   new list.
 
-  In DEBUG mode, an assertion error (ascSplitEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast. In other words, at least one
-  data object must be moved; you cannot call Split to create an empty
+  In DEBUG mode, an assertion error (`ascSplitEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`. In other words, at least one
+  data object must be moved; you cannot call `Split` to create an empty
   list.
 
 
 
 TDList
 ----------------------------------------------------------------------
-This is a linked list of data objects. Compared with TLinkList, this
+This is a linked list of data objects. Compared with `TLinkList`, this
 implementation uses external 'cursors' which point to the various data
 objects, and you move these cursors along the list by means of the
 list's methods. You can examine the data object that a cursor is
 pointing to, or insert a new one before or after a given cursor, or
 delete the data object at a cursor (unlink it). Again, there are two
-special cursor positions: before the first data object (BeforeFirst)
-and after the last data object (AfterLast). Even in an empty list
+special cursor positions: before the first data object (`BeforeFirst`)
+and after the last data object (`AfterLast`). Even in an empty list
 these are different.
 
-The difference between this object and TLinkList is in the use of
+The difference between this object and `TLinkList` is in the use of
 external cursors, and also in the internal implementation. This object
 uses nodes with two links (hence 'doubly linked') rather than one.
 
@@ -1801,15 +1793,15 @@ are valid. The following code is deemed a programming error:
           if (Next(Cursor) = NextCursor) then   {<=== CRASH}
             {...}
 
-Here, the value of Cursor is undefined after the call to Delete. This
+Here, the value of `Cursor` is undefined after the call to `Delete`. This
 is much the same as using pointers: you may have several copies of a
 pointer to a heap memory block, but as soon as you free that memory
 block all those pointer variables are invalid.
 
 As a convenience to the programmer, this implementation of a doubly-
 linked list allows the data objects to be maintained in a sorted
-order, much as for TLinkList. Please see the discussion of sorted
-lists in the TLinkList section.
+order, much as for `TLinkList`. Please see the discussion of sorted
+lists in the `TLinkList` section.
 
 
 Interfaced methods
@@ -1818,8 +1810,8 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the object by calling the ancestor's Create after setting a
-  node size of 12.  If DataOwner is true, the new list will own its
+  Creates the object by calling the ancestor's `Create` after setting a
+  node size of 12.  If `DataOwner` is true, the new list will own its
   data objects.
 
 ### Declaration
@@ -1835,67 +1827,67 @@ Interfaced methods
 #### Description
   Unlinks the current data object but does not dispose of it. The
   internal cursor is moved to the next data object in the list, or to
-  the AfterLast position if there are no more objects after it.
+  the `AfterLast` position if there are no more objects after it.
 
-  Please note that the parameter Cursor is invalid after this routine
+  Please note that the parameter `Cursor` is invalid after this routine
   is called.
 
-  In DEBUG mode, an assertion error (ascDeleteEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascDeleteEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     procedure Empty; override;
 #### Description
-  Walks the list, calling Erase for every data object it finds.
+  Walks the list, calling `Erase` for every data object it finds.
 
 ### Declaration
     function Erase(Cursor : TListCursor) : TListCursor;
 #### Description
-  Works like Delete, but also disposes the data object by calling
-  DisposeData, providing the list owns its data objects.
+  Works like `Delete`, but also disposes the data object by calling
+  `DisposeData`, providing the list owns its data objects.
 
 ### Declaration
     function Examine(Cursor : TListCursor) : pointer;
 #### Description
   Returns the data object the cursor is pointing to.
 
-  In DEBUG mode, an assertion error (ascExamineEdges) will occur if
-  the cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascExamineEdges`) will occur if
+  the cursor is at `BeforeFirst` or `AfterLast`.
 
 #### Description
     procedure InsertAfter(Cursor : TListCursor; aData : pointer);
 #### Description
-  Inserts the data object aData after the cursor for an unsorted list.
-  For a sorted list you should use InsertSorted to insert new data
+  Inserts the data object `aData` after the cursor for an unsorted list.
+  For a sorted list you should use `InsertSorted` to insert new data
   objects.
 
-  In DEBUG mode, an assertion error (ascInsertEdges) will occur if the
-  cursor is at AfterLast.
+  In DEBUG mode, an assertion error (`ascInsertEdges`) will occur if the
+  cursor is at `AfterLast`.
 
-  In DEBUG mode, an assertion error (ascIsSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsSortedList`) will occur if
   the list is sorted.
 
 ### Declaration
     procedure InsertBefore(Cursor : TListCursor; aData : pointer);
 #### Description
-  Inserts the data object aData before the cursor for an unsorted
-  list. For a sorted list you should use InsertSorted to insert new
+  Inserts the data object `aData` before the cursor for an unsorted
+  list. For a sorted list you should use `InsertSorted` to insert new
   data objects.
 
-  In DEBUG mode, an assertion error (ascInsertEdges) will occur if the
-  cursor is at BeforeFirst.
+  In DEBUG mode, an assertion error (`ascInsertEdges`) will occur if the
+  cursor is at `BeforeFirst`.
 
-  In DEBUG mode, an assertion error (ascIsSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsSortedList`) will occur if
   the list is sorted.
 
 ### Declaration
     procedure InsertSorted(aData : pointer);
 #### Description
-  Inserts the data object aData into a sorted list. For an unsorted
-  list you should use InsertAfter or InsertBefore to insert new data
+  Inserts the data object `aData` into a sorted list. For an unsorted
+  list you should use `InsertAfter` or `InsertBefore` to insert new data
   objects.
 
-  In DEBUG mode, an assertion error (ascIsNotSortedList) will occur if
+  In DEBUG mode, an assertion error (`ascIsNotSortedList`) will occur if
   the list is not sorted.
 
 ### Declaration
@@ -1914,31 +1906,31 @@ Interfaced methods
                      Backwards : boolean;
                      ExtraData : pointer) : TListCursor;
 #### Description
-  Walks the list from the start (if Backwards is False) or from the
-  end (if Backwards is True) and calls Action for each data object
-  found.  If Action returns False for a data object, then Iterate
-  immediately returns with that data object; if Action always returns
-  True then this method will return nil.  ExtraData is a pointer to
-  any other data that you may want Action to use.
+  Walks the list from the start (if `Backwards` is False) or from the
+  end (if `Backwards` is True) and calls `Action` for each data object
+  found.  If `Action` returns False for a data object, then `Iterate`
+  immediately returns with that data object; if `Action` always returns
+  True then this method will return nil.  `ExtraData` is a pointer to
+  any other data that you may want `Action` to use.
 
 ### Declaration
     procedure Join(Cursor : TListCursor; List : TDList);
 #### Description
-  Adds all the data objects in List to the current list, placing them
-  after the cursor. List is then destroyed. To add the data objects
-  before all the current ones, call SetBeforeFirst first; to add them
-  after all the current ones, call SetAfterLast and Prev first. 
+  Adds all the data objects in `List` to the current list, placing them
+  after the cursor. `List` is then destroyed. To add the data objects
+  before all the current ones, call `SetBeforeFirst` first; to add them
+  after all the current ones, call `SetAfterLast` and `Prev` first. 
 
-  Note that if the destination list is sorted, the nodes from List are
+  Note that if the destination list is sorted, the nodes from `List` are
   added in sorted order and it doesn't matter where the cursor is
   positioned.
 
-  In DEBUG mode, an assertion error (ascCannotJoinHere) will occur if
-  the cursor is at AfterLast.  
+  In DEBUG mode, an assertion error (`ascCannotJoinHere`) will occur if
+  the cursor is at `AfterLast`.  
 
   Please note that both lists concerned must either be data owners or
-  not. You cannot Join a list that is a data owner to one that is not.
-  In DEBUG mode, an assertion error (ascCannotJoinData) will occur if
+  not. You cannot `Join` a list that is a data owner to one that is not.
+  In DEBUG mode, an assertion error (`ascCannotJoinData`) will occur if
   you try.
 
 ### Declaration
@@ -1946,52 +1938,52 @@ Interfaced methods
 #### Description
   Moves the cursor to the next data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtEnd) will occur if
-  the cursor is at AfterLast.
+  In DEBUG mode, an assertion error (`ascAlreadyAtEnd`) will occur if
+  the cursor is at `AfterLast`.
 
 ### Declaration
     function Prev(Cursor : TListCursor) : TListCursor;
 #### Description
   Moves the cursor to the previous data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtStart) will occur if
-  the cursor is at BeforeFirst.
+  In DEBUG mode, an assertion error (`ascAlreadyAtStart`) will occur if
+  the cursor is at `BeforeFirst`.
 
 ### Declaration
     function Replace(Cursor : TListCursor; aData : pointer) :  pointer;
 #### Description
-  Replaces the data object at the cursor with aData and returns the
+  Replaces the data object at the cursor with `aData` and returns the
   replaced data object. Note that for sorted lists, the cursor might
-  be moved and will point to the aData data object..
+  be moved and will point to the `aData` data object.
 
-  In DEBUG mode an assertion error will occur (ascReplaceEdges) if the
-  cursor is currently at BeforeFirst or AfterLast.
+  In DEBUG mode an assertion error will occur (`ascReplaceEdges`) if the
+  cursor is currently at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     function Search(var Cursor : TListCursor;
                         aData  : pointer) : boolean;
 #### Description
-  Returns true if the data object aData is found in the list (Compare
+  Returns true if the data object `aData` is found in the list (`Compare`
   must return 0 between it and one of the data objects in the list),
   and returns the cursor. 
 
-  If the data object was not found in a sorted list, Search returns
+  If the data object was not found in a sorted list, `Search` returns
   the cursor just past where the data object should be inserted. 
 
   If the data object was not found in a non-sorted list, the cursor
-  returned is the AfterLast position.
+  returned is the `AfterLast` position.
 
 ### Declaration
     function SetAfterLast : TListCursor;
 #### Description
   Returns the cursor that is after all the data objects in the list.
-  Calling Prev with this cursor gives you the last object on the list.
+  Calling `Prev` with this cursor gives you the last object on the list.
 
 ### Declaration
     function SetBeforeFirst : TListCursor;
 #### Description
   Returns the cursor that is before all the data objects in the list.
-  Calling Next with this cursor gives you the first object on the
+  Calling `Next` with this cursor gives you the first object on the
   list.
 
 ### Declaration
@@ -2001,9 +1993,9 @@ Interfaced methods
   list, and moving all the data objects from the cursor onwards to the
   new list.
 
-  In DEBUG mode, an assertion error (ascSplitEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast. In other words, at least one
-  data object must be moved; you cannot call Split to create an empty
+  In DEBUG mode, an assertion error (`ascSplitEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`. In other words, at least one
+  data object must be moved; you cannot call `Split` to create an empty
   list.
 
 
@@ -2011,9 +2003,9 @@ Interfaced methods
 TSkipList
 ----------------------------------------------------------------------
 A skip list is a special type of linked list of data objects. The list
-is sorted and therefore requires the Compare method to be overridden. 
-Compared with TLinkList and TDList, this implementation uses nodes of
-varying sizes. The nodes have between 1 and 16 (skMaxLevels) of
+is sorted and therefore requires the `Compare` method to be overridden. 
+Compared with `TLinkList` and `TDList`, this implementation uses nodes of
+varying sizes. The nodes have between 1 and 16 (`skMaxLevels`) of
 forward pointers, the higher ones skipping over nodes with less
 forward pointers. This means much faster search times, but slightly
 slower list update times (i.e., insert and delete). It can cope with
@@ -2022,7 +2014,7 @@ red-black binary search tree, this type of data structure will consume
 more memory, will have equivalent insert times and delete times, and
 will have comparable (amortized) search times. 
 
-Like TLinkList and TDList, the skip list has two special positions:
+Like `TLinkList` and `TDList`, the skip list has two special positions:
 before all the data objects and after all the data objects.
 
 To grasp how it works, start with a classic doubly linked list where
@@ -2032,9 +2024,9 @@ nodes ahead as well. Furthermore suppose that about one in sixteen of
 the nodes has a pointer to the node 16 nodes ahead. And so on. As you
 can see, you can navigate through the list pretty quickly, jumping
 over lesser nodes and 'homing in' on the node you want. For example,
-in the diagram below, to get to g quickly from BeforeFirst, you can
-jump to d straightaway, followed by a smaller jump to f followed by a
-small jump to g.
+in the diagram below, to get to `g` quickly from `BeforeFirst`, you can
+jump to `d` straightaway, followed by a smaller jump to `f` followed by a
+small jump to `g`.
 
                 -------------------------------------------->
 
@@ -2056,18 +2048,18 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the object by calling the ancestor's Create after setting a
+  Creates the object by calling the ancestor's `Create` after setting a
   node size of 0: the skip list will allocate its own nodes since they
   are of varying sizes. A random number generator object is created to
   provide a sequence of random numbers for the insert algorithm. If
-  DataOwner is true, the new list will own its data objects.
+  `DataOwner` is true, the new list will own its data objects.
 
 ### Declaration
     constructor Clone(Source : TAbstractContainer;
                       DataOwner : boolean; NewCompare : TCompareFunc);
                                                               override;
 #### Description
-  Creates a copy of the Source skip list.
+  Creates a copy of the `Source` skip list.
 
 ### Declaration
     destructor TSkipList.Destroy; override;
@@ -2080,40 +2072,37 @@ Interfaced methods
 #### Description
   Unlinks the current data object but does not dispose of it. The
   internal cursor is moved to the next data object in the list, or to
-  the AfterLast position if there are no more objects after it.
+  the `AfterLast` position if there are no more objects after it.
 
-  In DEBUG mode, an assertion error (ascDeleteEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascDeleteEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     procedure Empty; override;
 #### Description
-  Walks the list, calling Erase for every data object it finds.
+  Walks the list, calling `Erase` for every data object it finds.
 
 ### Declaration
     function Erase(Cursor : TListCursor) : TListCursor;
 #### Description
-  Works like Delete, but also disposes the data object by calling
-  DisposeData if the list owns its data objects.
+  Works like `Delete`, but also disposes the data object by calling
+  `DisposeData` if the list owns its data objects.
 
 ### Declaration
     function Examine(Cursor : TListCursor) : pointer;
 #### Description
   Returns the data object the cursor is pointing to.
 
-  In DEBUG mode, an assertion error (ascExamineEdges) will occur if
-  the cursor is at BeforeFirst or AfterLast.
+  In DEBUG mode, an assertion error (`ascExamineEdges`) will occur if
+  the cursor is at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     procedure Insert(var Cursor : TListCursor; aData : pointer);
 #### Description
-  Inserts the data object aData in the correct place in the list's
+  Inserts the data object `aData` in the correct place in the list's
   sort sequence. Returns the cursor of the newly inserted data object.
 
-  Requires Compare to be overridden.
-
-  Inserts the data object aData in the correct place in the list's
-  sort sequence. Requires Compare to be overridden.
+  Requires `Compare` to be overridden.
 
 ### Declaration
     function IsAfterLast(Cursor : TListCursor) : boolean;
@@ -2131,22 +2120,22 @@ Interfaced methods
                      Backwards : boolean;
                      ExtraData : pointer) : TListCursor;
 #### Description
-  Walks the list from the start (if Backwards is False) or from the
-  end (if Backwards is True) and calls Action for each data object
-  found.  If Action returns False for a data object, then Iterate
-  immediately returns with that data object; if Action always returns
-  True then this method will return nil.  ExtraData is a pointer to
-  any other data that you may want Action to use.
+  Walks the list from the start (if `Backwards` is False) or from the
+  end (if `Backwards` is True) and calls `Action` for each data object
+  found.  If `Action` returns False for a data object, then `Iterate`
+  immediately returns with that data object; if `Action` always returns
+  True then this method will return nil.  `ExtraData` is a pointer to
+  any other data that you may want `Action` to use.
 
 ### Declaration
     procedure Join(List : TSkipList);
 #### Description
-  Adds all the data objects in List to the current list in sorted
+  Adds all the data objects in `List` to the current list in sorted
   order.
 
   Please note that both lists concerned must either be data owners or
   not. You cannot Join a list that is a data owner to one that is not.
-  In DEBUG mode, an assertion error (ascCannotJoinData) will occur if
+  In DEBUG mode, an assertion error (`ascCannotJoinData`) will occur if
   you try.
 
 ### Declaration
@@ -2154,32 +2143,32 @@ Interfaced methods
 #### Description
   Moves the cursor to the next data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtEnd) will occur if
-  the cursor is at AfterLast.
+  In DEBUG mode, an assertion error (`ascAlreadyAtEnd`) will occur if
+  the cursor is at `AfterLast`.
 
 ### Declaration
     function Prev(Cursor : TListCursor) : TListCursor;
 #### Description
   Moves the cursor to the previous data object in the list. 
 
-  In DEBUG mode, an assertion error (ascAlreadyAtStart) will occur if
-  the cursor is at BeforeFirst.
+  In DEBUG mode, an assertion error (`ascAlreadyAtStart`) will occur if
+  the cursor is at `BeforeFirst`.
 
 ### Declaration
     function Replace(Cursor : TListCursor; aData : pointer) : pointer;
 #### Description
-  Replaces the data object at the cursor with aData and returns the
+  Replaces the data object at the cursor with `aData` and returns the
   replaced data object. Note that for sorted lists, the cursor might
-  be moved and will point to the aData data object..
+  be moved and will point to the `aData` data object.
 
-  In DEBUG mode an assertion error will occur (ascReplaceEdges) if the
-  cursor is currently at BeforeFirst or AfterLast.
+  In DEBUG mode an assertion error will occur (`ascReplaceEdges`) if the
+  cursor is currently at `BeforeFirst` or `AfterLast`.
 
 ### Declaration
     function Search(var Cursor : TListCursor; aData : pointer)
                                                             : boolean;
 #### Description
-  Returns true if the data object aData is found in the list (Compare
+  Returns true if the data object `aData` is found in the list (`Compare`
   must return 0 between it and one of the data objects in the list)
   and the cursor is left pointing at the found data object.
 
@@ -2190,13 +2179,13 @@ Interfaced methods
     function SetAfterLast : TListCursor;
 #### Description
   Returns the cursor that is after all the data objects in the list.
-  Calling Prev with this cursor gives you the last object on the list.
+  Calling `Prev` with this cursor gives you the last object on the list.
 
 ### Declaration
     function SetBeforeFirst : TListCursor;
 #### Description
   Returns the cursor that is before all the data objects in the list.
-  Calling Next with this cursor gives you the first object on the
+  Calling `Next` with this cursor gives you the first object on the
   list.
 
 ### Declaration
@@ -2204,11 +2193,11 @@ Interfaced methods
 #### Description
   Splits the skip list into two at the cursor by creating a new list,
   and moving all the data objects from the cursor onwards to the new
-  list. The new list uses the same Compare function, and hence has the
+  list. The new list uses the same `Compare` function, and hence has the
   same sorted order, as the original list.
 
-  In DEBUG mode, an assertion error (ascSplitEdges) will occur if the
-  cursor is at BeforeFirst or AfterLast. In other words, at least one
+  In DEBUG mode, an assertion error (`ascSplitEdges`) will occur if the
+  cursor is at `BeforeFirst` or `AfterLast`. In other words, at least one
   data object must be moved; you cannot call Split to create an empty
   list.
 
@@ -2227,7 +2216,7 @@ links to two other trees. Classically a binary tree is drawn:
                      c   d  e   f
 
 The node at the top of the tree is called the root node. The
-implementation of a binary tree in EZSTRUCS uses the concepts of
+implementation of a binary tree in EZDSL uses the concepts of
 internal and external nodes. An internal node of the tree always has
 two children, an external node (also known as a leaf) has no children.
 An external node carries no data object, only internal nodes can be
@@ -2235,7 +2224,7 @@ associated with data objects; if you like, external nodes are like
 earth connections in electrical diagrams (in this implementation
 external nodes are nil).  In the literature internal nodes tend to be
 drawn with small circles and external nodes with small squares.  In
-the example above Root, a and b are all internal nodes; c, d, e, and f
+the example above Root, `a` and `b` are all internal nodes; `c`, `d`, `e`, and `f`
 are external nodes.  Internal and external nodes are important when
 you are inserting or deleting data objects.
 
@@ -2244,11 +2233,11 @@ happens is that a new internal node is created for the data object (it
 is created with two external children), and is placed at the position
 occupied by the external node. Think of an internal node having no
 'room' for a new inserted data object. A sorted tree (for example
-TBinSearchTree below) has enough information to be able to restructure
+`TBinSearchTree` below) has enough information to be able to restructure
 the tree (maintaining its essential sorted property) to violate this
 rule if it needs to (but in fact it doesn't).
 
-For example inserting NewObject at Leaf below:
+For example inserting `NewObject` at `Leaf` below:
 
          Parent                       Parent
         /      \         ====>       /      \
@@ -2288,29 +2277,29 @@ will restructure the tree using the sorted property to allow insertion
 and deletion at any point.
 
 Trees can be traversed in many different ways; the methods supported
-by TBinTree are pre order, in order, post order and level order
+by `TBinTree` are pre order, in order, post order and level order
 traversal, from left to right and vice versa. The definitions of the
 first three of these (from left to right), like that of a binary tree,
 are recursive:
 
- PreOrder:  visit the root node, traverse the left sub-tree, traverse
+- `PreOrder`:  visit the root node, traverse the left sub-tree, traverse
             the right sub-tree. In the first diagram above, nodes
-            would be visited in the order Root, a, c, d, b, e, f.
+            would be visited in the order `Root`, `a`, `c`, `d`, `b`, `e`, `f`.
 
- InOrder:   traverse the left sub-tree, visit the root node, traverse
+- `InOrder`:   traverse the left sub-tree, visit the root node, traverse
             the right sub-tree. In the first diagram above, nodes
-            would be visited in the order c, a, d, Root, e, b, f.
+            would be visited in the order `c`, `a`, `d`, `Root`, `e`, `b`, `f`.
 
- PostOrder: traverse the left sub-tree, traverse the right sub-tree,
+- `PostOrder`: traverse the left sub-tree, traverse the right sub-tree,
             visit the root node. In the first diagram above, nodes
-            would be visited in the order c, d, a, e, f, b, Root.
+            would be visited in the order `c`, `d`, `a`, `e`, `f`, `b`, `Root`.
 
-The last (LevelOrder) means visiting the root node first, then the
+The last (`LevelOrder`) means visiting the root node first, then the
 root node of its left subtree, then the root node of its right
 subtree, then the root node of its left subtree's left subtree, and so
 on, visiting all of the nodes from top to bottom from left to right at
 each level. In the first diagram above, nodes would be visited in the
-order Root, a, b, c, d, e, f.
+order `Root`, `a`, `b`, `c`, `d`, `e`, `f`.
 
 When traversing the tree from right to left the definitions are the
 same, except that the visiting order is reversed: you will be visiting
@@ -2325,10 +2314,10 @@ Properties
 #### Default
     ttInOrder
 #### Description
-  The traversal type for the Iterate method. 
+  The traversal type for the `Iterate` method. 
 
   Note that you shouldn't alter this property in the middle of a call
-  to the Iterate method (in the Action function for example).
+  to the `Iterate` method (in the `Action` function for example).
 
 ### Declaration
     property UseRecursion : boolean
@@ -2340,7 +2329,7 @@ Properties
 
   The classic way to traverse a binary tree is to use recursion: use a
   routine that calls itself. A pseudocode example is visiting a tree
-  in InOrder traversal order:
+  in `InOrder` traversal order:
 
      procedure VisitSubtree(Root : Node);
      begin
@@ -2351,7 +2340,7 @@ Properties
 
   As you can see, it's compact, explicit and runs very well. This is
   fine in a lot of cases, however when the tree is very large you may
-  use up a lot of your processes stack space. In 32-bit programming,
+  use up a lot of your process' stack space. In 32-bit programming,
   this isn't too dire since the stack is so large (default 1MB), but
   in 16-bit programming you can easily get a stack overflow error
   where you literally run out of stack space. It's in the case where
@@ -2366,9 +2355,9 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the tree by calling the ancestor's Create after setting a
-  node size of 16. The initial traversal order for the Iterate method
-  is set to InOrder.  If DataOwner is true, the new tree will own its
+  Creates the tree by calling the ancestor's `Create` after setting a
+  node size of 16. The initial traversal order for the `Iterate` method
+  is set to `InOrder`. If `DataOwner` is true, the new tree will own its
   data objects.
 
 ### Declaration
@@ -2376,20 +2365,20 @@ Interfaced methods
                     DataOwner : boolean; NewCompare : TCompareFunc);
                                                             override;
 #### Description
-  Creates a copy of the Source binary tree.
+  Creates a copy of the `Source` binary tree.
 
 ### Declaration
     function Delete(Cursor : TTreeCursor) : TTreeCursor; virtual;
 #### Description
   Unlinks the passed cursor from the tree but does not dispose of its
-  data object.  The cursor of the data object replacing it in the tree
+  data object. The cursor of the data object replacing it in the tree
   is returned. 
 
-  Please note that the parameter Cursor is invalid after this routine
+  Please note that the parameter `Cursor` is invalid after this routine
   is called.
 
-  An exception (escDelInvalidHere) will occur if Cursor does not have
-  at least one external child, or if Cursor is an external node.
+  An exception (`escDelInvalidHere`) will occur if `Cursor` does not have
+  at least one external child, or if `Cursor` is an external node.
 
 ### Declaration
     procedure Empty; override;
@@ -2397,41 +2386,41 @@ Interfaced methods
   Destroys all nodes and removes all data objects in the tree (data
   objects are destroyed if the tree is a data owner). 
 
-  Does a post order traversal of the tree calling Erase for all nodes.
+  Does a post order traversal of the tree calling `Erase` for all nodes.
 
 ### Declaration
     function Erase(Cursor : TTreeCursor) : TTreeCursor;
 #### Description
-  Works like Delete except that the data object pointed to by Cursor
+  Works like `Delete` except that the data object pointed to by `Cursor`
   is disposed of as well, providing that the tree owns its data
   objects.
 
 ### Declaration
     function Examine(Cursor : TTreeCursor) : pointer;
 #### Description
-  Returns the data object at Cursor. 
+  Returns the data object at `Cursor`. 
 
-  In DEBUG mode, an assertion error (ascEmptyExamine) will occur if
+  In DEBUG mode, an assertion error (`ascEmptyExamine`) will occur if
   the tree is empty.
 
-  In DEBUG mode, an assertion error (ascExamineLeaf) will occur if
-  Cursor is an external node (which have no data objects associated
+  In DEBUG mode, an assertion error (`ascExamineLeaf`) will occur if
+  `Cursor` is an external node (which have no data objects associated
   with them).
 
 ### Declaration
     procedure Insert(var Cursor : TTreeCursor; aData : pointer);
                                                               virtual;
 #### Description
-  Inserts the data object aData into the tree at Cursor, where Cursor
+  Inserts the data object `aData` into the tree at `Cursor`, where `Cursor`
   is assumed to be an external node. 
 
-  An exception (escInsInvalidHere) will be raised if the node is not a
+  An exception (`escInsInvalidHere`) will be raised if the node is not a
   leaf (an external node).
 
 ### Declaration
     function IsLeaf(Cursor : TTreeCursor) : boolean;
 #### Description
-  Returns true if Cursor is pointing at an external node (a leaf). 
+  Returns true if `Cursor` is pointing at an external node (a leaf). 
 
   Note that although this implementation of binary trees uses nil for
   external nodes, this does NOT mean that a cursor that's pointing to
@@ -2440,7 +2429,7 @@ Interfaced methods
 ### Declaration
     function IsRoot(Cursor : TTreeCursor) : boolean;
 #### Description
-  Returns true if Cursor is pointing at the data object at the tree's
+  Returns true if `Cursor` is pointing at the data object at the tree's
   root.
 
 ### Declaration
@@ -2449,54 +2438,54 @@ Interfaced methods
                      ExtraData : pointer) : TListCursor;
 #### Description
   Walks the tree from the root data object in the traversal order
-  defined by TraversalType. If Backwards is False the traversal goes
-  from left to right, if True from right to left. Iterate calls Action
-  for each data object found.  If Action returns False, then this
-  method immediately returns with that data object's cursor; if Action
-  always returns True then this method will return 0. ExtraData is a
-  pointer to any other data that you may want Action to use.
+  defined by `TraversalType`. If `Backwards` is False the traversal goes
+  from left to right, if True from right to left. `Iterate` calls `Action`
+  for each data object found.  If `Action` returns False, then this
+  method immediately returns with that data object's cursor; if `Action`
+  always returns True then this method will return 0. `ExtraData` is a
+  pointer to any other data that you may want `Action` to use.
 
 ### Declaration
     procedure Join(Cursor : TTreeCursor; Tree : TBinTree); virtual;
 #### Description
-  Moves all the data objects in Tree onto the tree at the position
-  pointed to by Cursor, where Cursor is assumed to be an external
+  Moves all the data objects in `Tree` onto the tree at the position
+  pointed to by `Cursor`, where `Cursor` is assumed to be an external
   node. Tree is then disposed of. 
 
-  An exception (escInsInvalidHere) will be raised if Cursor is not an
+  An exception (`escInsInvalidHere`) will be raised if `Cursor` is not an
   external node.
 
 ### Declaration
     function Left(Cursor : TTreeCursor) : TTreeCursor;
 #### Description
-  Returns the cursor of the left child of Cursor. 
+  Returns the cursor of the left child of `Cursor`. 
 
-  An exception (escCannotMoveHere) will occur if Cursor is at an
+  An exception (`escCannotMoveHere`) will occur if `Cursor` is at an
   external node (which has no children).
 
 ### Declaration
     function Parent(Cursor : TTreeCursor) : TTreeCursor;
 #### Description
-  Returns the cursor of the parent of Cursor. 
+  Returns the cursor of the parent of `Cursor`. 
 
-  An exception (escCannotMoveHere) will occur if Cursor is at the
+  An exception (`escCannotMoveHere`) will occur if `Cursor` is at the
   root.
 
 ### Declaration
     function Replace(Cursor : TTreeCursor; aData : pointer) : pointer;
 #### Description
-  Replaces the data object at the cursor with aData and returns the
+  Replaces the data object at the cursor with `aData` and returns the
   replaced data object. 
 
-  In DEBUG mode, an assertion error (ascExamineLeaf) will occur if
-  Cursor is an external node.
+  In DEBUG mode, an assertion error (`ascExamineLeaf`) will occur if
+  `Cursor` is an external node.
 
 ### Declaration
     function Right(Cursor : TTreeCursor) : TTreeCursor;
 #### Description
-  Returns the cursor of the right child of Cursor. 
+  Returns the cursor of the right child of `Cursor`. 
 
-  An exception (escCannotMoveHere) will occur if Cursor is at an
+  An exception (`escCannotMoveHere`) will occur if `Cursor` is at an
   external node (which has no children).
 
 ### Declaration
@@ -2508,10 +2497,10 @@ Interfaced methods
     function Search(var Cursor : TTreeCursor;
                         aData  : pointer) : boolean; virtual;
 #### Description
-  Returns true if the data object aData is found in the tree (the
-  tree's Compare function must return 0 between it and an object in
-  the list), and returns the cursor. If aData was not found then
-  Cursor is undefined.
+  Returns true if the data object `aData` is found in the tree (the
+  tree's `Compare` function must return 0 between it and an object in
+  the list), and returns the cursor. If `aData` was not found then
+  `Cursor` is undefined.
 
 
 
@@ -2520,7 +2509,7 @@ TBinSearchTree
 A binary search tree is a sorted binary tree where for any given data
 object, all data objects in its left subtree are less than it, and all
 data objects in the right subtree are greater than it. This ordering
-relies on the Compare function to be overridden.
+relies on the `Compare` function to be overridden.
 
 Binary search trees of this simple type suffer from the well-known
 problem that they can degenerate into sorted linked lists. There is no
@@ -2528,7 +2517,7 @@ balancing mechanism for dealing with such degenerate cases as
 inserting data objects in sorted order or in other pathological
 orders.
 
-For example insert the letters abcd into a binary search tree using
+For example insert the letters `abcd` into a binary search tree using
 the normal ASCII collating sequence and you'd get the tree:
 
                      a
@@ -2539,7 +2528,7 @@ the normal ASCII collating sequence and you'd get the tree:
                           \
                            d
 
-and if you inserted the letters aebdc into a binary search tree you'd
+and if you inserted the letters `aebdc` into a binary search tree you'd
 get:
 
                      a
@@ -2552,7 +2541,7 @@ get:
                       /
                      c
 
-For a balanced tree see the red-black tree TrbSearchTree. However if
+For a balanced tree see the red-black tree `TrbSearchTree`. However if
 you are fairly sure that either (a) the number of data objects is
 likely to be small and/or (b) they will be inserted in a non-sorted
 fashion, then an ordinary binary search tree will be more efficient.
@@ -2564,7 +2553,7 @@ Interfaced methods
 ### Declaration
     constructor Create(DataOwner : boolean);
 #### Description
-  Creates the tree by calling the ancestor's Create. The container is
+  Creates the tree by calling the ancestor's `Create`. The container is
   forced to sorted.
 
 ### Declaration
@@ -2572,7 +2561,7 @@ Interfaced methods
                       DataOwner : boolean; NewCompare : TCompareFunc);
                                                              override;
 #### Description
-  Creates a copy of the Source binary search tree.
+  Creates a copy of the `Source` binary search tree.
 
 ### Declaration
     function Delete(Cursor : TTreeCursor) : TTreeCursor;  virtual;
@@ -2581,49 +2570,49 @@ Interfaced methods
   data object.  The cursor of the data object replacing it in the tree
   is returned. 
 
-  Please note that the parameter Cursor is invalid after this routine
+  Please note that the parameter `Cursor` is invalid after this routine
   is called.
 
   NOTE: you can delete any internal node in a binary search tree (the
-  tree will be rearranged), but Delete will still cause an exception
+  tree will be rearranged), but `Delete` will still cause an exception
   if you try and delete an external node.
 
 ### Declaration
     procedure Insert(var Cursor : TTreeCursor; aData : pointer);
                                                             override;
 #### Description
-  Searches for the data object with the Search method. If not found,
-  Search will return an external cursor, and the data object is
-  inserted there.  If found, an exception (edsInsertDup) will be
+  Searches for the data object with the `Search` method. If not found,
+  `Search` will return an external cursor, and the data object is
+  inserted there.  If found, an exception (`edsInsertDup`) will be
   raised. 
 
-  The cursor of the newly inserted data object is returned in Cursor.
+  The cursor of the newly inserted data object is returned in `Cursor`.
 
 ### Declaration
     procedure Join(Cursor : TTreeCursor; Tree : TBinTree); override;
 #### Description
-  Moves all the data objects in Tree into Self. Because of the sorted
+  Moves all the data objects in `Tree` into Self. Because of the sorted
   nature of binary search trees, the new data objects cannot be
-  inserted en masse at Cursor: the tree must maintain its sequence.
-  Hence Cursor is not used and is ignored (but must be defined as Join
+  inserted en masse at `Cursor`: the tree must maintain its sequence.
+  Hence `Cursor` is not used and is ignored (but must be defined as `Join`
   is a virtual method).
 
 ### Declaration
     function Replace(Cursor : TTreeCursor;
                      aData : pointer) : pointer;
 #### Description
-  Replaces the data object of Cursor, and returns the replaced object.
-  Note that this is just shorthand for Delete followed by Insert.
+  Replaces the data object of `Cursor`, and returns the replaced object.
+  Note that this is just shorthand for `Delete` followed by `Insert`.
 
 ### Declaration
     function Search (var Cursor : TTreeCursor;
                          aData : pointer) : boolean; virtual;
 #### Description
-  Searches for a data object aData by traversing the tree (in 'sorted'
-  order), and calling the Compare method for each visited data object
-  and the given data object aData. If Compare returns 0 (equal),
-  Search will return the cursor of the current data object, if Compare
-  never returns 0, Search returns the cursor of the external node
+  Searches for a data object `aData` by traversing the tree (in 'sorted'
+  order), and calling the `Compare` method for each visited data object
+  and the given data object aData. If `Compare` returns 0 (equal),
+  `Search` will return the cursor of the current data object, if `Compare`
+  never returns 0, `Search` returns the cursor of the external node
   where it ended up (this would be where the data object could be
   inserted).
 
@@ -2632,7 +2621,7 @@ Interfaced methods
 TrbSearchTree
 ----------------------------------------------------------------------
 A red-black tree is a binary search tree with inbuilt tree balancing
-algorithms during Insert and Delete. This ensures that the tree does
+algorithms during `Insert` and `Delete`. This ensures that the tree does
 not degenerate into a sorted linked list, maintaining its excellent
 search times. Balancing in this sense means that the internal
 algorithms try to ensure that the path from every leaf to the root is
@@ -2660,7 +2649,7 @@ Interfaced methods
 ### Declaration
     function Delete(Cursor : TTreeCursor) : TTreeCursor; override;
 #### Description
-  Deletes the data object at Cursor from the tree, and returns the
+  Deletes the data object at `Cursor` from the tree, and returns the
   cursor of the data object that replaced the deleted one. Rebalances
   the tree if necessary.
 
@@ -2668,11 +2657,11 @@ Interfaced methods
     procedure Insert(var Cursor : TTreeCursor;
                          aData : pointer); override;
 #### Description
-  Searches for the data object with Search. If found an exception
-  will be raised with code edsInsertDup.  Otherwise, the data object
-  is inserted at the cursor returned by Search, and the tree is
+  Searches for the data object with `Search`. If found an exception
+  will be raised with code `edsInsertDup`.  Otherwise, the data object
+  is inserted at the cursor returned by `Search`, and the tree is
   re-balanced if necessary.  The cursor of the newly inserted data
-  object is returned in Cursor.
+  object is returned in `Cursor`.
 
 
 
@@ -2683,7 +2672,7 @@ data objects, one data object per string. The key is used to identify
 the data object. This is different from the other 'sorted' containers
 in EZDSL where, if the data objects were sorted, the keys to sort on
 were part of the data object itself. The hash table uses separate
-string keys to identify each data object. In fact, the Compare
+string keys to identify each data object. In fact, the `Compare`
 function is not used in the hash table. Sometimes hash tables are
 known as string dictionaries.
 
@@ -2692,7 +2681,7 @@ extract individual strings (and their associated data objects) at the
 expense of keeping them in a recognizable sorted order.
 
 The container works by using a hash function. The process goes like
-this the string is 'hashed' using the hash function to produce an
+this: the string is 'hashed' using the hash function to produce an
 integer value. This value is used as an index into a simple array. As
 you can see, getting to a given string is very fast since no searching
 has to be done. 
@@ -2732,14 +2721,14 @@ Properties
     property HashFunction : THashFunction
 
     THashFunction = function (const S : string) : longint;
-Default 
+#### Default 
     HashBKDR
 #### Description
   The hash function for the hash table. Keys of data objects in the
   table will be hashed by this function to determine their index into
   the hash table.
 
-  If you set HashFunction, then the hash table will reorganize its
+  If you set `HashFunction`, then the hash table will reorganize its
   data objects and keys to use the new function. This requires a
   separate internal array to be allocated, all the keys and data
   objects transferred to it and the old array disposed of. Naturally
@@ -2760,12 +2749,12 @@ Default
   The Windows locale is used both to compare and to uppercase strings.
   You cannot change this behavior.
 
-  If you set IgnoreCase, then the hash table will reorganize its data
+  If you set `IgnoreCase`, then the hash table will reorganize its data
   objects and keys to use the new value. This requires a separate
   internal array to be allocated, all the keys and data objects
   transferred to it and the old array disposed of. Naturally this
   takes time. In general, though, you wouldn't change a hash table's
-  IgnoreCase property after creating the table.
+  `IgnoreCase` property after creating the table.
 
 ### Declaration
     property TableSize : integer
@@ -2774,16 +2763,16 @@ Default
 #### Description
   The current number of slots in the table. This number is prime.
 
-  The table is grown when it reaches 2/3 full (i.e., Count is 2/3 of
-  TableSize) by approximately doubling its size. The table is shrunk
-  when is reaches 1/6 full (i.e., Count is 1/6 of TableSize) by
+  The table is grown when it reaches 2/3 full (i.e., `Count` is 2/3 of
+  `TableSize`) by approximately doubling its size. The table is shrunk
+  when is reaches 1/6 full (i.e., `Count` is 1/6 of `TableSize`) by
   approximately halving its size.
 
   If you set this property, the container will force the number of
-  slots to the nearest  prime. So if you try and set the table size to
+  slots to the nearest prime. So if you try and set the table size to
   100, say, the set method for the property will force the size to
   101, the nearest prime. This improves the efficiency of the hash
-  table. If you set TableSize, then the hash table will reorganize its
+  table. If you set `TableSize`, then the hash table will reorganize its
   data objects and keys to use the new value. This requires a separate
   internal array to be allocated, all the keys and data objects
   transferred to it and the old array disposed of. 
@@ -2791,8 +2780,8 @@ Default
   HINT: if you know that you'll be adding 1000 keys and data objects
   to a hash table, it will be more efficient to set the table size
   right at the start, rather than letting the table grow
-  incrementally. Since Count cannot be greater than 2/3 TableSize, you
-  need to set TableSize to 1500 when you create the hash table. Since
+  incrementally. Since `Count` cannot be greater than 2/3 `TableSize`, you
+  need to set `TableSize` to 1500 when you create the hash table. Since
   there won't be any data objects in the table, this will be very
   fast, and you've ensured that you won't need to grow the table.
 
@@ -2805,14 +2794,14 @@ Interfaced methods
 #### Description
   Creates a new instance of a hash table. Calls the ancestor, passing
   a NodeSize of 0 -- the hash table does not use nodes. Sets the
-  HashFunction property to the default HashBKDR routine. Sets the
-  IgnoreCase property to false. Sets the TableSize property to 53, and
+  `HashFunction` property to the default `HashBKDR` routine. Sets the
+  `IgnoreCase` property to false. Sets the `TableSize` property to 53, and
   allocates an array of that many slots.
 
 ### Declaration
     destructor Destroy; override;
 #### Description
-  Destroys the hash table by calling Empty and then disposing of the
+  Destroys the hash table by calling `Empty` and then disposing of the
   current array of slots.
 
 ### Declaration
@@ -2821,24 +2810,24 @@ Interfaced methods
                       NewCompare : TCompareFunc); override;
 #### Description
   Creates a clone of an existing hash table. The newly created hash
-  table has the same values for the HashFunction, IgnoreCase and
-  TableSize properties as the old. 
+  table has the same values for the `HashFunction`, `IgnoreCase` and
+  `TableSize` properties as the old. 
 
-  NOTE: the Compare function is not used in hash tables so always pass
-  nil for NewCompare.
+  NOTE: the `Compare` function is not used in hash tables so always pass
+  nil for `NewCompare`.
 
 ### Declaration
     procedure Delete(const aKey : string);
 #### Description
-  Deletes the data object associated with the string aKey. The data
+  Deletes the data object associated with the string `aKey`. The data
   object itself is not destroyed by this method, but the slot for its
   key is marked as deleted. 
 
   If the number of data objects in the hash table falls to below 1/6
-  of TableSize as a result of calling this method, the table is shrunk
+  of `TableSize` as a result of calling this method, the table is shrunk
   to roughly half its size and the remaining data objects reorganized.
 
-  If the key is not present, an exception (escKeyNotFound) is raised.
+  If the key is not present, an exception (`escKeyNotFound`) is raised.
 
 ### Declaration
     procedure Empty; override;
@@ -2846,45 +2835,45 @@ Interfaced methods
   Empties the hash table and marks all slots as unused. If the hash
   table is a data owner it will dispose of all the data objects as
   well. The hash table is not shrunk; after this method is called the
-  TableSize property will have the same value as before.
+  `TableSize` property will have the same value as before.
 
 ### Declaration
     procedure Erase(const aKey : string);
 #### Description
-  Calls Delete to remove the string aKey from the hash table, and, if
+  Calls `Delete` to remove the string `aKey` from the hash table, and, if
   the container is a data owner, disposes of the data object.
 
-  If the key is not present, an exception (escKeyNotFound) is raised.
+  If the key is not present, an exception (`escKeyNotFound`) is raised.
 
 ### Declaration
     function Examine(const aKey : string) : pointer;
 #### Description
-  Returns the data object for the given string aKey. 
+  Returns the data object for the given string `aKey`. 
 
-  If the key is not present, an exception (escKeyNotFound) is raised.
+  If the key is not present, an exception (`escKeyNotFound`) is raised.
 
 ### Declaration
     procedure Insert(const aKey : string; aData : pointer);
 #### Description
-  Inserts a data object into the tree using the string aKey.
+  Inserts a data object into the tree using the string `aKey`.
 
   If the key is already present in the hash table, an exception
-  (escInsertDup) is raised.
+  (`escInsertDup`) is raised.
 
   If the number of data objects in the hash table rises to above 2/3
-  of TableSize as a result of calling this method, the table is grown
+  of `TableSize` as a result of calling this method, the table is grown
   to roughly twice its size and the data objects reorganized.
 
 ### Declaration
     function Iterate(Action : TIterator; Backwards : boolean;
                      ExtraData : pointer) : pointer;
 #### Description
-  Walks the hash table from the first slot (if Backwards is False) or
-  from the last (if Backwards is True) and calls Action for each data
-  object found.  If Action returns False for a data object, then
-  Iterate immediately returns with that data object; if Action always
-  returns True then this method will return nil.  ExtraData is a
-  pointer to any other data that you may want Action to use.
+  Walks the hash table from the first slot (if `Backwards` is False) or
+  from the last (if `Backwards` is True) and calls `Action` for each data
+  object found.  If `Action` returns False for a data object, then
+  `Iterate` immediately returns with that data object; if `Action` always
+  returns True then this method will return nil.  `ExtraData` is a
+  pointer to any other data that you may want `Action` to use.
 
   It is important to realize that the order in which you'll see the
   data objects is essentially random. Also you cannot 'see' the keys
@@ -2894,28 +2883,28 @@ Interfaced methods
     procedure THashTable.Join(HashTable : THashTable);
 #### Description
   Joins a hash table to the current one. All of the data objects and
-  keys in the HashTable container are moved over to the current one,
-  and HashTable is freed afterwards.
+  keys in the `HashTable` container are moved over to the current one,
+  and `HashTable` is freed afterwards.
 
 ### Declaration
     function THashTable.Search(const aKey : string; 
                                var aData : pointer) : boolean;
 #### Description
-  Searches for the string aKey in the hash table. If found, the method
-  returns true, and the data object is returned in aData, If not
-  found, the method returns false, and aData is set to nil.
+  Searches for the string `aKey` in the hash table. If found, the method
+  returns true, and the data object is returned in `aData`, If not
+  found, the method returns false, and `aData` is set to nil.
 
-  This is a better method to use than Examine in certain cases since
+  This is a better method to use than `Examine` in certain cases since
   it does not raise an exception if the key is not found.
 
 
 
 TBooleanArray
 ----------------------------------------------------------------------
-The TBooleanArray class encapsulates an array of boolean values.
+The `TBooleanArray` class encapsulates an array of boolean values.
 Sometimes in the literature it is known as a bitset or a bit array, or
-a bitmap. The main difference between the TBooleanArray and a simple
-array [] of boolean is that the TBooleanArray manages to pack 8
+a bitmap. The main difference between the `TBooleanArray` and a simple
+array [] of boolean is that the `TBooleanArray` manages to pack 8
 boolean values per byte, one for each bit.
 
 The class has the usual complement of methods and properties. You can
@@ -2952,7 +2941,7 @@ Properties
   current set of boolean values will be copied over - at least as many
   as will fit, and if the block has grown, the new boolean values are
   set to false - and then the old memory block is freed. If the
-  current memory block is an external one (i.e., SwitchArrays was
+  current memory block is an external one (i.e., `SwitchArrays` was
   used), it is not freed of course.
 
 ### Declaration
@@ -2961,7 +2950,7 @@ Properties
   READ ONLY. The number of true boolean values. 
 
   The number of false boolean values can be calculated by subtracting
-  Count from Capacity.
+  `Count` from `Capacity`.
 
 ### Declaration
     property Flag[aInx : longint] : boolean 
@@ -2970,9 +2959,9 @@ Properties
 
   This property can be read or written to. The booleans in the array
   have indexes that start at zero; the final boolean has index
-  Capacity-1. If aInx is out of range (i.e., is less than zero or
-  greater than or equal to Capacity) an EEZContainerError exception is
-  raised with code escBadBooleanInx. This array property is the
+  `Capacity`-1. If `aInx` is out of range (i.e., is less than zero or
+  greater than or equal to `Capacity`) an `EEZContainerError` exception is
+  raised with code `escBadBooleanInx`. This array property is the
   default one for the class, so in general you can specify code like
   this:
 
@@ -2990,10 +2979,10 @@ Interfaced methods
 Descripition
   Create a new boolean array instance.
 
-  aCapacity is the number of boolean values in the array. It can be
+  `aCapacity` is the number of boolean values in the array. It can be
   zero, but be aware that in order to use the instance you must either
-  switch to an external memory block (SwitchArrays) or set the
-  Capacity property.
+  switch to an external memory block (`SwitchArrays`) or set the
+  `Capacity` property.
 
 ### Declaration
     destructor Destroy; override;
@@ -3002,7 +2991,7 @@ Descripition
 
   If the memory block being used as the repository for all the boolean
   values is internal (in other words you have not switched to an
-  external memory block with SwitchArrays) then it will be freed.
+  external memory block with `SwitchArrays`) then it will be freed.
 
 ### Declaration
     procedure AndArray(aArray : TBooleanArray);
@@ -3010,8 +2999,8 @@ Descripition
   ANDs another boolean array into this one.
 
   The other boolean array aArray cannot be nil, and must have the same
-  Capacity as the current one. In DEBUG mode, an assertion error
-  (ascNilArray) will occur for the former condition, (ascNotSameSize)
+  `Capacity` as the current one. In DEBUG mode, an assertion error
+  (`ascNilArray`) will occur for the former condition, (`ascNotSameSize`)
   for the latter.
 
 ### Declaration
@@ -3034,23 +3023,23 @@ Descripition
 #### Description
   Iterates through the boolean values in the array.
 
-  The iteration visits all true booleans only if aValue is true, or
-  all false ones if aValue is false. The iteration is done backwards,
-  starting from the end, if aBackwards is true. For each boolean that
-  is equal to aValue, the routine aAction is called. This routine is
+  The iteration visits all true booleans only if `aValue` is true, or
+  all false ones if `aValue` is false. The iteration is done backwards,
+  starting from the end, if `aBackwards` is true. For each boolean that
+  is equal to `aValue`, the routine `aAction` is called. This routine is
   of the form
 
      TBooleanArrayIterator = function(C : TBooleanArray;
                                       aIndex : longint;
                                       ExtraData : pointer) : boolean;
 
-  and will be called with C equal to the boolean array instance,
-  aIndex the element number of the boolean that triggered the call,
-  and ExtraData is the aExtraData pointer passed to the Iterate
+  and will be called with `C` equal to the boolean array instance,
+  `aIndex` the element number of the boolean that triggered the call,
+  and `ExtraData` is the aExtraData pointer passed to the `Iterate`
   function in the first place. The action routine returns true to
   continue the iteration, and false to stop it immediately. If the
-  latter occurs, Iterate returns the index of the boolean for which
-  aAction returned true, otherwise Iterate returns -1.
+  latter occurs, `Iterate` returns the index of the boolean for which
+  `aAction` returned true, otherwise `Iterate` returns -1.
 
 ### Declaration
     function LastFalse : longint;
@@ -3069,7 +3058,7 @@ Descripition
 #### Description
   Returns the index of the next false boolean in the array, counting
   from the boolean just after the given index (in other words, the
-  first boolean to be checked is at index aFromInx+1). If there is
+  first boolean to be checked is at index `aFromInx`+1). If there is
   none, -1 is returned instead.
 
 ### Declaration
@@ -3077,7 +3066,7 @@ Descripition
 #### Description
   Returns the index of the next true boolean in the array, counting
   from the boolean just after the given index (in other words, the
-  first boolean to be checked is at index aFromInx+1). If there is
+  first boolean to be checked is at index `aFromInx`+1). If there is
   none, -1 is returned instead.
 
 ### Declaration
@@ -3085,9 +3074,9 @@ Descripition
 #### Description
   ORs another boolean array into this one
 
-  The other boolean array aArray cannot be nil, and must have the same
-  Capacity as the current one. In DEBUG mode, an assertion error
-  (ascNilArray) will occur for the former condition, (ascNotSameSize)
+  The other boolean array `aArray` cannot be nil, and must have the same
+  `Capacity` as the current one. In DEBUG mode, an assertion error
+  (`ascNilArray`) will occur for the former condition, (`ascNotSameSize`)
   for the latter.
 
 ### Declaration
@@ -3095,7 +3084,7 @@ Descripition
 #### Description
   Returns the index of the previous false boolean in the array,
   counting from the boolean just before the given index (in other
-  words, the first boolean to be checked is at index aFromInx-1). If
+  words, the first boolean to be checked is at index `aFromInx`-1). If
   there is none, -1 is returned instead.
 
 ### Declaration
@@ -3103,7 +3092,7 @@ Descripition
 #### Description
   Returns the index of the previous true boolean in the array,
   counting from the boolean just before the given index (in other
-  words, the first boolean to be checked is at index aFromInx-1). If
+  words, the first boolean to be checked is at index `aFromInx`-1). If
   there is none, -1 is returned instead.
 
 ### Declaration
@@ -3121,9 +3110,9 @@ Descripition
                            aCapacity   : longint);
 #### Description
   Force the boolean array to use another memory block for its boolean
-  values
+  values.
 
-  aCapacity is the number of boolean values (or bits) in the new
+  `aCapacity` is the number of boolean values (or bits) in the new
   memory block. 
 
   Whereas the boolean array class will dispose of its own internal
@@ -3134,7 +3123,7 @@ Descripition
 
   If you have switched arrays to an external memory block for a
   boolean array instance and you wish to switch back to an internal
-  one, just set the Capacity property to something new.
+  one, just set the `Capacity` property to something new.
 
   For example, to use a longint variable as the new memory block, do
   this:
@@ -3156,8 +3145,8 @@ Descripition
      Flag[aInx] := not Flag[aInx];
 
   If the index passed to the method is out of range (i.e., is less
-  than zero, or is equal to or greater than Capacity) then an
-  EEZContainerError exception is raised with code escBadBooleanInx.
+  than zero, or is equal to or greater than `Capacity`) then an
+  `EEZContainerError` exception is raised with code `escBadBooleanInx`.
 
 ### Declaration
     procedure ToggleAll;
@@ -3167,25 +3156,25 @@ Descripition
 ### Declaration
     procedure XorArray(aArray : TBooleanArray);
 #### Description
-  XORs another boolean array into this one
+  XORs another boolean array into this one.
 
-  The other boolean array aArray cannot be nil, and must have the same
-  Capacity as the current one. In DEBUG mode, an assertion error
-  (ascNilArray) will occur for the former condition, (ascNotSameSize)
+  The other boolean array `aArray` cannot be nil, and must have the same
+  `Capacity` as the current one. In DEBUG mode, an assertion error
+  (`ascNilArray`) will occur for the former condition, (`ascNotSameSize`)
   for the latter.
 
 
 
 Random Number Generator
 ----------------------------------------------------------------------
-EZDSL comes with a random number generator that is used by TSkipList.
+EZDSL comes with a random number generator that is used by `TSkipList`.
 Although not a container for anything (unless you view it as a
 container of random numbers), and hence not really a part of EZDSL, it
 might be useful in your own programming projects.
 
 The generator differs from the standard Delphi one in two respects: 
 
-- It is implemented as a class (TEZRandomGenerator); therefore you can
+- It is implemented as a class (`TEZRandomGenerator`); therefore you can
   have several independent random number generators in your
   applications.
 
@@ -3202,7 +3191,7 @@ Interfaced methods
     constructor Create;
 #### Description
   Create a new generator. The generator is seeded from the system
-  clock by calling SetSeed(0).
+  clock by calling `SetSeed(0)`.
 
 ### Declaration
     destructor Destroy; override;
@@ -3216,10 +3205,10 @@ Interfaced methods
 
   If you are going to use a random number generator object across two
   or more threads, you must acquire exclusive access to the random
-  number generator by calling this method before calling on of the
+  number generator by calling this method before calling one of the
   random number methods. If you do not, severe memory corruption or
   access violations could result. You release exclusive access by
-  calling ReleaseAccess.
+  calling `ReleaseAccess`.
 
   Generally if you are using a single generator across multiple
   threads, you'd call it like this:
@@ -3263,47 +3252,47 @@ Interfaced methods
 ### Declaration
     function RandomIntLimit(aUpperLimit : integer) : integer;
 #### Description
-  Return a random integer in the range: 0 <= R < aUpperLimit.
+  Return a random integer in the range: 0 <= R < `aUpperLimit`.
 
-  NOTE: no check is made to see whether aUpperLimit > 0.
+  NOTE: no check is made to see whether `aUpperLimit` > 0.
 
 ### Declaration
     function RandomIntRange(aLowerLimit, 
                             aUpperLimit : integer) : integer;
 #### Description
-  Return a random integer in the range: aLowerLimit <= R <
-  aUpperLimit.
+  Return a random integer in the range: `aLowerLimit` <= R <
+  `aUpperLimit`.
 
-  NOTE: no check is made to see whether aUpperLimit > aLowerLimit.
+  NOTE: no check is made to see whether `aUpperLimit` > `aLowerLimit`.
 
 ### Declaration
     function RandomFloatLimit(aUpperLimit : double) : double;
 #### Description
-  Return a random double in the range: 0.0 <= R < aUpperLimit.
+  Return a random double in the range: 0.0 <= R < `aUpperLimit`.
 
-  NOTE: no check is made to see whether aUpperLimit > 0.
+  NOTE: no check is made to see whether `aUpperLimit` > 0.
 
 ### Declaration
     function RandomFloatRange(aLowerLimit, 
                               aUpperLimit : double) : double;
 #### Description
-  Return a random double in the range: aLowerLimit <= R < aUpperLimit.
+  Return a random double in the range: `aLowerLimit` <= R < `aUpperLimit`.
 
-  NOTE: no check is made to see whether aUpperLimit > aLowerLimit.
+  NOTE: no check is made to see whether `aUpperLimit` > `aLowerLimit`.
 
 ### Declaration
     procedure ReleaseAccess;
 #### Description
   Unlock the generator in a multithreaded process, the lock having
-  been acquired by AcquireAccess.
+  been acquired by `AcquireAccess`.
 
 ### Declaration
     procedure SetSeed(const aSeed : longint);
 #### Description
   Reseed the generator from a known value.
 
-  If aSeed is zero, the generator reseeds from the system clock. The
-  Create constructor includes a call to SetSeed that does this.
+  If `aSeed` is zero, the generator reseeds from the system clock. The
+  `Create` constructor includes a call to `SetSeed` that does this.
 
 
 
